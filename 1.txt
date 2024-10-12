@@ -1,0 +1,16 @@
+Microsoft (R) COFF/PE Dumper Version 14.40.33811.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file E:\GeoTransformer-1.0.0\build\temp.win-amd64-cpython-38\Release\geotransformer\extensions\cpu\grid_subsampling\ext.cp38-win_amd64.lib
+
+File Type: LIBRARY
+
+  Summary
+
+          E4 .debug$S
+          14 .idata$2
+          14 .idata$3
+           8 .idata$4
+           8 .idata$5
+          18 .idata$6

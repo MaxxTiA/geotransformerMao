@@ -1,0 +1,855 @@
+[2024-07-09 12:34:54] [INFO] Command executed: trainval.py
+[2024-07-09 12:34:54] [INFO] Configs:
+{
+    "seed": 7351,
+    "working_dir": "E:\\GeoTransformer-1.0.0\\experiments\\geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn",
+    "root_dir": "E:\\GeoTransformer-1.0.0",
+    "exp_name": "geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn",
+    "output_dir": "E:\\GeoTransformer-1.0.0\\output\\geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn",
+    "snapshot_dir": "E:\\GeoTransformer-1.0.0\\output\\geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn\\snapshots",
+    "log_dir": "E:\\GeoTransformer-1.0.0\\output\\geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn\\logs",
+    "event_dir": "E:\\GeoTransformer-1.0.0\\output\\geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn\\events",
+    "data": {
+        "dataset_root": "E:\\GeoTransformer-1.0.0\\data\\ModelNet",
+        "num_points": 717,
+        "voxel_size": null,
+        "rotation_magnitude": 180.0,
+        "translation_magnitude": 0.5,
+        "keep_ratio": 0.7,
+        "crop_method": "plane",
+        "asymmetric": true,
+        "twice_sample": true,
+        "twice_transform": false
+    },
+    "train": {
+        "batch_size": 1,
+        "num_workers": 8,
+        "noise_magnitude": 0.05,
+        "class_indices": "all"
+    },
+    "test": {
+        "batch_size": 1,
+        "num_workers": 8,
+        "noise_magnitude": 0.05,
+        "class_indices": "all"
+    },
+    "eval": {
+        "acceptance_overlap": 0.0,
+        "acceptance_radius": 0.1,
+        "inlier_ratio_threshold": 0.05,
+        "rre_threshold": 1.0,
+        "rte_threshold": 0.1
+    },
+    "ransac": {
+        "distance_threshold": 0.05,
+        "num_points": 3,
+        "num_iterations": 1000
+    },
+    "optim": {
+        "lr": 0.0001,
+        "weight_decay": 1e-06,
+        "warmup_steps": 10000,
+        "eta_init": 0.1,
+        "eta_min": 0.1,
+        "max_iteration": 400000,
+        "snapshot_steps": 10000,
+        "grad_acc_steps": 1
+    },
+    "backbone": {
+        "num_stages": 3,
+        "init_voxel_size": 0.05,
+        "kernel_size": 15,
+        "base_radius": 2.5,
+        "base_sigma": 2.0,
+        "init_radius": 0.125,
+        "init_sigma": 0.1,
+        "group_norm": 32,
+        "input_dim": 1,
+        "init_dim": 64,
+        "output_dim": 256
+    },
+    "model": {
+        "ground_truth_matching_radius": 0.05,
+        "num_points_in_patch": 128,
+        "num_sinkhorn_iterations": 100
+    },
+    "coarse_matching": {
+        "num_targets": 128,
+        "overlap_threshold": 0.1,
+        "num_correspondences": 128,
+        "dual_normalization": true
+    },
+    "geotransformer": {
+        "input_dim": 512,
+        "hidden_dim": 256,
+        "output_dim": 256,
+        "num_heads": 4,
+        "blocks": [
+            "self",
+            "cross",
+            "self",
+            "cross",
+            "self",
+            "cross"
+        ],
+        "sigma_d": 0.2,
+        "sigma_a": 15,
+        "angle_k": 3,
+        "reduction_a": "max"
+    },
+    "fine_matching": {
+        "topk": 3,
+        "acceptance_radius": 0.1,
+        "mutual": true,
+        "confidence_threshold": 0.05,
+        "use_dustbin": false,
+        "use_global_score": false,
+        "correspondence_threshold": 3,
+        "correspondence_limit": null,
+        "num_refinement_steps": 5
+    },
+    "coarse_loss": {
+        "positive_margin": 0.1,
+        "negative_margin": 1.4,
+        "positive_optimal": 0.1,
+        "negative_optimal": 1.4,
+        "log_scale": 24,
+        "positive_overlap": 0.1
+    },
+    "fine_loss": {
+        "positive_radius": 0.05
+    },
+    "loss": {
+        "weight_coarse_loss": 1.0,
+        "weight_fine_loss": 1.0
+    }
+}
+[2024-07-09 12:34:54] [INFO] Tensorboard is enabled. Write events to E:\GeoTransformer-1.0.0\output\geotransformer.modelnet.rpmnet.stage4.gse.k3.max.oacl.stage2.sinkhorn\events.
+[2024-07-09 12:34:54] [INFO] Using Single-GPU mode.
+[2024-07-09 12:34:55] [INFO] Data loader created: 0.605s collapsed.
+[2024-07-09 12:34:55] [INFO] Calibrate neighbors: [27 32 35].
+[2024-07-09 12:34:56] [INFO] Model description:
+GeoTransformer(
+  (backbone): KPConvFPN(
+    (encoder1_1): ConvBlock(
+      (KPConv): KPConv(kernel_size: 15, in_channels: 1, out_channels: 64, radius: 0.125, sigma: 0.1, bias: True)
+      (norm): GroupNorm(
+        (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder1_2): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=64, out_features=32, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 32, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 32, out_channels: 32, radius: 0.125, sigma: 0.1, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 32, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=32, out_features=128, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): UnaryBlock(
+        (mlp): Linear(in_features=64, out_features=128, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+        )
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder2_1): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=128, out_features=32, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 32, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 32, out_channels: 32, radius: 0.125, sigma: 0.1, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 32, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=32, out_features=128, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): Identity()
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder2_2): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=128, out_features=64, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 64, out_channels: 64, radius: 0.25, sigma: 0.2, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=64, out_features=256, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 256, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): UnaryBlock(
+        (mlp): Linear(in_features=128, out_features=256, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 256, eps=1e-05, affine=True)
+        )
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder2_3): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=256, out_features=64, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 64, out_channels: 64, radius: 0.25, sigma: 0.2, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=64, out_features=256, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 256, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): Identity()
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder3_1): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=256, out_features=64, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 64, out_channels: 64, radius: 0.25, sigma: 0.2, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 64, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=64, out_features=256, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 256, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): Identity()
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder3_2): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=256, out_features=128, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 128, out_channels: 128, radius: 0.5, sigma: 0.4, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=128, out_features=512, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 512, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): UnaryBlock(
+        (mlp): Linear(in_features=256, out_features=512, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 512, eps=1e-05, affine=True)
+        )
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (encoder3_3): ResidualBlock(
+      (unary1): UnaryBlock(
+        (mlp): Linear(in_features=512, out_features=128, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+        )
+        (leaky_relu): LeakyReLU(negative_slope=0.1)
+      )
+      (KPConv): KPConv(kernel_size: 15, in_channels: 128, out_channels: 128, radius: 0.5, sigma: 0.4, bias: True)
+      (norm_conv): GroupNorm(
+        (norm): GroupNorm(32, 128, eps=1e-05, affine=True)
+      )
+      (unary2): UnaryBlock(
+        (mlp): Linear(in_features=128, out_features=512, bias=True)
+        (norm): GroupNorm(
+          (norm): GroupNorm(32, 512, eps=1e-05, affine=True)
+        )
+      )
+      (unary_shortcut): Identity()
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (decoder2): UnaryBlock(
+      (mlp): Linear(in_features=768, out_features=256, bias=True)
+      (norm): GroupNorm(
+        (norm): GroupNorm(32, 256, eps=1e-05, affine=True)
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.1)
+    )
+    (decoder1): LastUnaryBlock(
+      (mlp): Linear(in_features=384, out_features=256, bias=True)
+    )
+  )
+  (transformer): GeometricTransformer(
+    (embedding): GeometricStructureEmbedding(
+      (embedding): SinusoidalPositionalEmbedding()
+      (proj_d): Linear(in_features=256, out_features=256, bias=True)
+      (proj_a): Linear(in_features=256, out_features=256, bias=True)
+    )
+    (in_proj): Linear(in_features=512, out_features=256, bias=True)
+    (transformer): RPEConditionalTransformer(
+      (layers): ModuleList(
+        (0): RPETransformerLayer(
+          (attention): RPEAttentionLayer(
+            (attention): RPEMultiHeadAttention(
+              (proj_q): Linear(in_features=256, out_features=256, bias=True)
+              (proj_k): Linear(in_features=256, out_features=256, bias=True)
+              (proj_v): Linear(in_features=256, out_features=256, bias=True)
+              (proj_p): Linear(in_features=256, out_features=256, bias=True)
+              (dropout): Identity()
+            )
+            (linear): Linear(in_features=256, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+          (output): AttentionOutput(
+            (expand): Linear(in_features=256, out_features=512, bias=True)
+            (activation): ReLU()
+            (squeeze): Linear(in_features=512, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+        (1): TransformerLayer(
+          (attention): AttentionLayer(
+            (attention): MultiHeadAttention(
+              (proj_q): Linear(in_features=256, out_features=256, bias=True)
+              (proj_k): Linear(in_features=256, out_features=256, bias=True)
+              (proj_v): Linear(in_features=256, out_features=256, bias=True)
+              (dropout): Identity()
+            )
+            (linear): Linear(in_features=256, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+          (output): AttentionOutput(
+            (expand): Linear(in_features=256, out_features=512, bias=True)
+            (activation): ReLU()
+            (squeeze): Linear(in_features=512, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+        (2): RPETransformerLayer(
+          (attention): RPEAttentionLayer(
+            (attention): RPEMultiHeadAttention(
+              (proj_q): Linear(in_features=256, out_features=256, bias=True)
+              (proj_k): Linear(in_features=256, out_features=256, bias=True)
+              (proj_v): Linear(in_features=256, out_features=256, bias=True)
+              (proj_p): Linear(in_features=256, out_features=256, bias=True)
+              (dropout): Identity()
+            )
+            (linear): Linear(in_features=256, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+          (output): AttentionOutput(
+            (expand): Linear(in_features=256, out_features=512, bias=True)
+            (activation): ReLU()
+            (squeeze): Linear(in_features=512, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+        (3): TransformerLayer(
+          (attention): AttentionLayer(
+            (attention): MultiHeadAttention(
+              (proj_q): Linear(in_features=256, out_features=256, bias=True)
+              (proj_k): Linear(in_features=256, out_features=256, bias=True)
+              (proj_v): Linear(in_features=256, out_features=256, bias=True)
+              (dropout): Identity()
+            )
+            (linear): Linear(in_features=256, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+          (output): AttentionOutput(
+            (expand): Linear(in_features=256, out_features=512, bias=True)
+            (activation): ReLU()
+            (squeeze): Linear(in_features=512, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+        (4): RPETransformerLayer(
+          (attention): RPEAttentionLayer(
+            (attention): RPEMultiHeadAttention(
+              (proj_q): Linear(in_features=256, out_features=256, bias=True)
+              (proj_k): Linear(in_features=256, out_features=256, bias=True)
+              (proj_v): Linear(in_features=256, out_features=256, bias=True)
+              (proj_p): Linear(in_features=256, out_features=256, bias=True)
+              (dropout): Identity()
+            )
+            (linear): Linear(in_features=256, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+          (output): AttentionOutput(
+            (expand): Linear(in_features=256, out_features=512, bias=True)
+            (activation): ReLU()
+            (squeeze): Linear(in_features=512, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+        (5): TransformerLayer(
+          (attention): AttentionLayer(
+            (attention): MultiHeadAttention(
+              (proj_q): Linear(in_features=256, out_features=256, bias=True)
+              (proj_k): Linear(in_features=256, out_features=256, bias=True)
+              (proj_v): Linear(in_features=256, out_features=256, bias=True)
+              (dropout): Identity()
+            )
+            (linear): Linear(in_features=256, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+          (output): AttentionOutput(
+            (expand): Linear(in_features=256, out_features=512, bias=True)
+            (activation): ReLU()
+            (squeeze): Linear(in_features=512, out_features=256, bias=True)
+            (dropout): Identity()
+            (norm): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
+          )
+        )
+      )
+    )
+    (out_proj): Linear(in_features=256, out_features=256, bias=True)
+  )
+  (coarse_target): SuperPointTargetGenerator()
+  (coarse_matching): SuperPointMatching()
+  (fine_matching): LocalGlobalRegistration(
+    (procrustes): WeightedProcrustes()
+  )
+  (optimal_transport): LearnableLogOptimalTransport(num_iterations=100)
+)
+[2024-07-09 12:35:21] [INFO] Iter: 10/400000, loss: 2.512, c_loss: 1.052, f_loss: 1.460, PIR: 0.046, IR: 0.329, RRE: 52.088, RTE: 0.420, RMSE: 0.315, RR: 0.000, lr: 1.009e-05, time: 2.100s/0.445s
+[2024-07-09 12:35:25] [INFO] Iter: 20/400000, loss: 2.416, c_loss: 0.982, f_loss: 1.433, PIR: 0.042, IR: 0.315, RRE: 37.632, RTE: 0.244, RMSE: 0.220, RR: 0.200, lr: 1.018e-05, time: 1.068s/0.374s
+[2024-07-09 12:35:28] [INFO] Iter: 30/400000, loss: 2.458, c_loss: 0.989, f_loss: 1.469, PIR: 0.048, IR: 0.325, RRE: 7.982, RTE: 0.075, RMSE: 0.068, RR: 0.100, lr: 1.027e-05, time: 0.723s/0.348s
+[2024-07-09 12:35:31] [INFO] Iter: 40/400000, loss: 2.406, c_loss: 0.952, f_loss: 1.454, PIR: 0.056, IR: 0.356, RRE: 33.135, RTE: 0.231, RMSE: 0.258, RR: 0.000, lr: 1.036e-05, time: 0.551s/0.335s
+[2024-07-09 12:35:35] [INFO] Iter: 50/400000, loss: 2.490, c_loss: 0.947, f_loss: 1.542, PIR: 0.070, IR: 0.359, RRE: 51.805, RTE: 0.401, RMSE: 0.371, RR: 0.000, lr: 1.045e-05, time: 0.447s/0.327s
+[2024-07-09 12:35:38] [INFO] Iter: 60/400000, loss: 2.584, c_loss: 0.939, f_loss: 1.644, PIR: 0.076, IR: 0.387, RRE: 47.732, RTE: 0.386, RMSE: 0.289, RR: 0.000, lr: 1.054e-05, time: 0.378s/0.323s
+[2024-07-09 12:35:42] [INFO] Iter: 70/400000, loss: 2.378, c_loss: 0.935, f_loss: 1.442, PIR: 0.068, IR: 0.344, RRE: 28.499, RTE: 0.139, RMSE: 0.173, RR: 0.100, lr: 1.063e-05, time: 0.330s/0.323s
+[2024-07-09 12:35:45] [INFO] Iter: 80/400000, loss: 2.354, c_loss: 0.939, f_loss: 1.415, PIR: 0.048, IR: 0.350, RRE: 39.827, RTE: 0.356, RMSE: 0.373, RR: 0.000, lr: 1.072e-05, time: 0.293s/0.322s
+[2024-07-09 12:35:48] [INFO] Iter: 90/400000, loss: 2.426, c_loss: 0.929, f_loss: 1.496, PIR: 0.067, IR: 0.401, RRE: 29.946, RTE: 0.187, RMSE: 0.103, RR: 0.100, lr: 1.081e-05, time: 0.264s/0.320s
+[2024-07-09 12:35:52] [INFO] Iter: 100/400000, loss: 2.387, c_loss: 0.930, f_loss: 1.458, PIR: 0.094, IR: 0.392, RRE: 20.081, RTE: 0.164, RMSE: 0.119, RR: 0.100, lr: 1.090e-05, time: 0.241s/0.319s
+[2024-07-09 12:35:55] [INFO] Iter: 110/400000, loss: 2.461, c_loss: 0.923, f_loss: 1.538, PIR: 0.071, IR: 0.349, RRE: 25.496, RTE: 0.201, RMSE: 0.202, RR: 0.000, lr: 1.099e-05, time: 0.222s/0.317s
+[2024-07-09 12:35:59] [INFO] Iter: 120/400000, loss: 2.408, c_loss: 0.929, f_loss: 1.479, PIR: 0.078, IR: 0.393, RRE: 11.694, RTE: 0.083, RMSE: 0.060, RR: 0.200, lr: 1.108e-05, time: 0.207s/0.317s
+[2024-07-09 12:36:03] [INFO] Iter: 130/400000, loss: 2.173, c_loss: 0.911, f_loss: 1.263, PIR: 0.060, IR: 0.323, RRE: 22.581, RTE: 0.166, RMSE: 0.192, RR: 0.100, lr: 1.117e-05, time: 0.194s/0.319s
+[2024-07-09 12:36:06] [INFO] Iter: 140/400000, loss: 2.150, c_loss: 0.911, f_loss: 1.238, PIR: 0.069, IR: 0.321, RRE: 9.865, RTE: 0.083, RMSE: 0.084, RR: 0.000, lr: 1.126e-05, time: 0.183s/0.321s
+[2024-07-09 12:36:10] [INFO] Iter: 150/400000, loss: 2.526, c_loss: 0.925, f_loss: 1.601, PIR: 0.071, IR: 0.383, RRE: 32.627, RTE: 0.175, RMSE: 0.184, RR: 0.000, lr: 1.135e-05, time: 0.173s/0.323s
+[2024-07-09 12:36:14] [INFO] Iter: 160/400000, loss: 2.423, c_loss: 0.919, f_loss: 1.504, PIR: 0.045, IR: 0.395, RRE: 29.265, RTE: 0.223, RMSE: 0.155, RR: 0.100, lr: 1.144e-05, time: 0.165s/0.323s
+[2024-07-09 12:36:17] [INFO] Iter: 170/400000, loss: 2.375, c_loss: 0.914, f_loss: 1.461, PIR: 0.073, IR: 0.361, RRE: 36.656, RTE: 0.293, RMSE: 0.236, RR: 0.000, lr: 1.153e-05, time: 0.157s/0.323s
+[2024-07-09 12:36:21] [INFO] Iter: 180/400000, loss: 2.479, c_loss: 0.921, f_loss: 1.558, PIR: 0.083, IR: 0.365, RRE: 39.512, RTE: 0.349, RMSE: 0.291, RR: 0.000, lr: 1.162e-05, time: 0.150s/0.323s
+[2024-07-09 12:36:25] [INFO] Iter: 190/400000, loss: 2.254, c_loss: 0.911, f_loss: 1.343, PIR: 0.073, IR: 0.348, RRE: 55.882, RTE: 0.216, RMSE: 0.286, RR: 0.000, lr: 1.171e-05, time: 0.144s/0.323s
+[2024-07-09 12:36:28] [INFO] Iter: 200/400000, loss: 2.375, c_loss: 0.907, f_loss: 1.469, PIR: 0.080, IR: 0.403, RRE: 36.818, RTE: 0.235, RMSE: 0.157, RR: 0.100, lr: 1.180e-05, time: 0.139s/0.322s
+[2024-07-09 12:36:32] [INFO] Iter: 210/400000, loss: 2.543, c_loss: 0.930, f_loss: 1.614, PIR: 0.076, IR: 0.425, RRE: 37.968, RTE: 0.283, RMSE: 0.290, RR: 0.000, lr: 1.189e-05, time: 0.134s/0.322s
+[2024-07-09 12:36:35] [INFO] Iter: 220/400000, loss: 2.302, c_loss: 0.915, f_loss: 1.387, PIR: 0.105, IR: 0.416, RRE: 28.105, RTE: 0.394, RMSE: 0.239, RR: 0.000, lr: 1.198e-05, time: 0.129s/0.322s
+[2024-07-09 12:36:39] [INFO] Iter: 230/400000, loss: 2.628, c_loss: 0.923, f_loss: 1.705, PIR: 0.058, IR: 0.487, RRE: 4.265, RTE: 0.045, RMSE: 0.039, RR: 0.100, lr: 1.207e-05, time: 0.125s/0.321s
+[2024-07-09 12:36:42] [INFO] Iter: 240/400000, loss: 2.158, c_loss: 0.904, f_loss: 1.253, PIR: 0.060, IR: 0.338, RRE: 29.889, RTE: 0.263, RMSE: 0.194, RR: 0.100, lr: 1.216e-05, time: 0.121s/0.321s
+[2024-07-09 12:36:46] [INFO] Iter: 250/400000, loss: 2.429, c_loss: 0.921, f_loss: 1.508, PIR: 0.083, IR: 0.420, RRE: 19.081, RTE: 0.312, RMSE: 0.217, RR: 0.100, lr: 1.225e-05, time: 0.118s/0.321s
+[2024-07-09 12:36:49] [INFO] Iter: 260/400000, loss: 2.201, c_loss: 0.908, f_loss: 1.293, PIR: 0.047, IR: 0.358, RRE: 29.729, RTE: 0.221, RMSE: 0.189, RR: 0.100, lr: 1.234e-05, time: 0.115s/0.321s
+[2024-07-09 12:36:53] [INFO] Iter: 270/400000, loss: 2.409, c_loss: 0.912, f_loss: 1.497, PIR: 0.083, IR: 0.382, RRE: 57.681, RTE: 0.553, RMSE: 0.381, RR: 0.000, lr: 1.243e-05, time: 0.112s/0.321s
+[2024-07-09 12:36:56] [INFO] Iter: 280/400000, loss: 2.179, c_loss: 0.906, f_loss: 1.273, PIR: 0.078, IR: 0.347, RRE: 8.697, RTE: 0.083, RMSE: 0.079, RR: 0.000, lr: 1.252e-05, time: 0.109s/0.321s
+[2024-07-09 12:37:00] [INFO] Iter: 290/400000, loss: 2.510, c_loss: 0.918, f_loss: 1.592, PIR: 0.131, IR: 0.472, RRE: 14.850, RTE: 0.137, RMSE: 0.203, RR: 0.000, lr: 1.261e-05, time: 0.107s/0.321s
+[2024-07-09 12:37:03] [INFO] Iter: 300/400000, loss: 2.489, c_loss: 0.916, f_loss: 1.573, PIR: 0.066, IR: 0.355, RRE: 61.678, RTE: 0.262, RMSE: 0.327, RR: 0.100, lr: 1.270e-05, time: 0.104s/0.320s
+[2024-07-09 12:37:07] [INFO] Iter: 310/400000, loss: 2.316, c_loss: 0.931, f_loss: 1.385, PIR: 0.069, IR: 0.391, RRE: 21.940, RTE: 0.257, RMSE: 0.192, RR: 0.100, lr: 1.279e-05, time: 0.102s/0.320s
+[2024-07-09 12:37:10] [INFO] Iter: 320/400000, loss: 2.404, c_loss: 0.908, f_loss: 1.496, PIR: 0.076, IR: nan, RRE: 55.112, RTE: 0.221, RMSE: 0.319, RR: 0.000, lr: 1.288e-05, time: 0.100s/0.320s
+[2024-07-09 12:37:14] [INFO] Iter: 330/400000, loss: 2.454, c_loss: 0.914, f_loss: 1.540, PIR: 0.047, IR: 0.347, RRE: 38.088, RTE: 0.264, RMSE: 0.236, RR: 0.000, lr: 1.297e-05, time: 0.098s/0.320s
+[2024-07-09 12:37:17] [INFO] Iter: 340/400000, loss: 2.098, c_loss: 0.903, f_loss: 1.195, PIR: 0.059, IR: 0.330, RRE: 31.019, RTE: 0.243, RMSE: 0.159, RR: 0.000, lr: 1.306e-05, time: 0.096s/0.320s
+[2024-07-09 12:37:21] [INFO] Iter: 350/400000, loss: 2.157, c_loss: 0.901, f_loss: 1.256, PIR: 0.029, IR: 0.331, RRE: 7.625, RTE: 0.091, RMSE: 0.080, RR: 0.100, lr: 1.315e-05, time: 0.094s/0.320s
+[2024-07-09 12:37:24] [INFO] Iter: 360/400000, loss: 2.334, c_loss: 0.917, f_loss: 1.417, PIR: 0.084, IR: 0.407, RRE: 24.813, RTE: 0.205, RMSE: 0.157, RR: 0.000, lr: 1.324e-05, time: 0.093s/0.320s
+[2024-07-09 12:37:28] [INFO] Iter: 370/400000, loss: 2.266, c_loss: 0.906, f_loss: 1.360, PIR: 0.089, IR: 0.375, RRE: 7.312, RTE: 0.072, RMSE: 0.063, RR: 0.100, lr: 1.333e-05, time: 0.091s/0.320s
+[2024-07-09 12:37:32] [INFO] Iter: 380/400000, loss: 2.304, c_loss: 0.897, f_loss: 1.406, PIR: 0.062, IR: 0.362, RRE: 39.296, RTE: 0.309, RMSE: 0.249, RR: 0.100, lr: 1.342e-05, time: 0.090s/0.320s
+[2024-07-09 12:37:35] [INFO] Iter: 390/400000, loss: 2.202, c_loss: 0.916, f_loss: 1.286, PIR: 0.056, IR: 0.379, RRE: 32.610, RTE: 0.195, RMSE: 0.214, RR: 0.000, lr: 1.351e-05, time: 0.088s/0.320s
+[2024-07-09 12:37:39] [INFO] Iter: 400/400000, loss: 2.270, c_loss: 0.905, f_loss: 1.366, PIR: 0.116, IR: 0.359, RRE: 29.696, RTE: 0.307, RMSE: 0.241, RR: 0.000, lr: 1.360e-05, time: 0.087s/0.321s
+[2024-07-09 12:37:43] [INFO] Iter: 410/400000, loss: 2.545, c_loss: 0.911, f_loss: 1.634, PIR: 0.107, IR: nan, RRE: 62.654, RTE: 0.533, RMSE: 0.297, RR: 0.100, lr: 1.369e-05, time: 0.086s/0.321s
+[2024-07-09 12:37:46] [INFO] Iter: 420/400000, loss: 2.459, c_loss: 0.906, f_loss: 1.553, PIR: 0.134, IR: 0.474, RRE: 48.751, RTE: 0.389, RMSE: 0.246, RR: 0.100, lr: 1.378e-05, time: 0.085s/0.320s
+[2024-07-09 12:37:50] [INFO] Iter: 430/400000, loss: 2.357, c_loss: 0.922, f_loss: 1.435, PIR: 0.070, IR: 0.404, RRE: 20.055, RTE: 0.064, RMSE: 0.102, RR: 0.300, lr: 1.387e-05, time: 0.083s/0.320s
+[2024-07-09 12:37:53] [INFO] Iter: 440/400000, loss: 2.406, c_loss: 0.907, f_loss: 1.499, PIR: 0.075, IR: 0.422, RRE: 42.789, RTE: 0.303, RMSE: 0.400, RR: 0.000, lr: 1.396e-05, time: 0.082s/0.320s
+[2024-07-09 12:37:57] [INFO] Iter: 450/400000, loss: 2.071, c_loss: 0.895, f_loss: 1.175, PIR: 0.057, IR: 0.327, RRE: 18.808, RTE: 0.245, RMSE: 0.160, RR: 0.000, lr: 1.405e-05, time: 0.081s/0.321s
+[2024-07-09 12:38:01] [INFO] Iter: 460/400000, loss: 2.061, c_loss: 0.907, f_loss: 1.155, PIR: 0.059, IR: 0.330, RRE: 6.305, RTE: 0.046, RMSE: 0.054, RR: 0.000, lr: 1.414e-05, time: 0.080s/0.321s
+[2024-07-09 12:38:04] [INFO] Iter: 470/400000, loss: 2.378, c_loss: 0.907, f_loss: 1.472, PIR: 0.072, IR: 0.403, RRE: 23.298, RTE: 0.147, RMSE: 0.155, RR: 0.100, lr: 1.423e-05, time: 0.079s/0.321s
+[2024-07-09 12:38:08] [INFO] Iter: 480/400000, loss: 2.224, c_loss: 0.906, f_loss: 1.319, PIR: 0.048, IR: 0.409, RRE: 11.452, RTE: 0.052, RMSE: 0.119, RR: 0.000, lr: 1.432e-05, time: 0.079s/0.322s
+[2024-07-09 12:38:12] [INFO] Iter: 490/400000, loss: 2.559, c_loss: 0.913, f_loss: 1.646, PIR: 0.115, IR: 0.452, RRE: 27.063, RTE: 0.219, RMSE: 0.161, RR: 0.200, lr: 1.441e-05, time: 0.078s/0.322s
+[2024-07-09 12:38:16] [INFO] Iter: 500/400000, loss: 2.595, c_loss: 0.914, f_loss: 1.680, PIR: 0.116, IR: 0.472, RRE: 39.483, RTE: 0.195, RMSE: 0.225, RR: 0.000, lr: 1.450e-05, time: 0.077s/0.323s
+[2024-07-09 12:38:19] [INFO] Iter: 510/400000, loss: 2.341, c_loss: 0.913, f_loss: 1.428, PIR: 0.079, IR: 0.439, RRE: 28.706, RTE: 0.200, RMSE: 0.169, RR: 0.100, lr: 1.459e-05, time: 0.076s/0.323s
+[2024-07-09 12:38:23] [INFO] Iter: 520/400000, loss: 2.453, c_loss: 0.907, f_loss: 1.546, PIR: 0.085, IR: 0.442, RRE: 33.018, RTE: 0.311, RMSE: 0.193, RR: 0.000, lr: 1.468e-05, time: 0.075s/0.323s
+[2024-07-09 12:38:26] [INFO] Iter: 530/400000, loss: 2.315, c_loss: 0.913, f_loss: 1.402, PIR: 0.109, IR: 0.433, RRE: 25.171, RTE: 0.316, RMSE: 0.193, RR: 0.200, lr: 1.477e-05, time: 0.074s/0.322s
+[2024-07-09 12:38:30] [INFO] Iter: 540/400000, loss: 2.384, c_loss: 0.912, f_loss: 1.472, PIR: 0.070, IR: 0.384, RRE: 34.088, RTE: 0.279, RMSE: 0.303, RR: 0.100, lr: 1.486e-05, time: 0.074s/0.322s
+[2024-07-09 12:38:33] [INFO] Iter: 550/400000, loss: 2.243, c_loss: 0.903, f_loss: 1.340, PIR: 0.106, IR: 0.366, RRE: 42.793, RTE: 0.314, RMSE: 0.298, RR: 0.000, lr: 1.495e-05, time: 0.073s/0.322s
+[2024-07-09 12:38:36] [INFO] Iter: 560/400000, loss: 2.538, c_loss: 0.918, f_loss: 1.620, PIR: 0.104, IR: 0.428, RRE: 68.239, RTE: 0.497, RMSE: 0.398, RR: 0.000, lr: 1.504e-05, time: 0.072s/0.321s
+[2024-07-09 12:38:40] [INFO] Iter: 570/400000, loss: 2.135, c_loss: 0.897, f_loss: 1.238, PIR: 0.049, IR: 0.356, RRE: 34.835, RTE: 0.289, RMSE: 0.271, RR: 0.100, lr: 1.513e-05, time: 0.072s/0.321s
+[2024-07-09 12:38:43] [INFO] Iter: 580/400000, loss: 2.293, c_loss: 0.913, f_loss: 1.380, PIR: 0.075, IR: 0.392, RRE: 31.322, RTE: 0.404, RMSE: 0.213, RR: 0.000, lr: 1.522e-05, time: 0.071s/0.321s
+[2024-07-09 12:38:46] [INFO] Iter: 590/400000, loss: 2.625, c_loss: 0.908, f_loss: 1.717, PIR: 0.188, IR: 0.439, RRE: 45.716, RTE: 0.377, RMSE: 0.396, RR: 0.000, lr: 1.531e-05, time: 0.070s/0.320s
+[2024-07-09 12:38:50] [INFO] Iter: 600/400000, loss: 2.102, c_loss: 0.901, f_loss: 1.201, PIR: 0.059, IR: 0.370, RRE: 8.194, RTE: 0.067, RMSE: 0.068, RR: 0.000, lr: 1.540e-05, time: 0.070s/0.320s
+[2024-07-09 12:38:53] [INFO] Iter: 610/400000, loss: 2.580, c_loss: 0.908, f_loss: 1.672, PIR: 0.127, IR: 0.412, RRE: 42.346, RTE: 0.280, RMSE: 0.257, RR: 0.000, lr: 1.549e-05, time: 0.069s/0.320s
+[2024-07-09 12:38:57] [INFO] Iter: 620/400000, loss: 2.620, c_loss: 0.907, f_loss: 1.713, PIR: 0.115, IR: 0.486, RRE: 30.535, RTE: 0.236, RMSE: 0.203, RR: 0.100, lr: 1.558e-05, time: 0.068s/0.320s
+[2024-07-09 12:39:00] [INFO] Iter: 630/400000, loss: 2.104, c_loss: 0.892, f_loss: 1.212, PIR: 0.104, IR: 0.360, RRE: 8.324, RTE: 0.074, RMSE: 0.086, RR: 0.100, lr: 1.567e-05, time: 0.068s/0.320s
+[2024-07-09 12:39:04] [INFO] Iter: 640/400000, loss: 2.301, c_loss: 0.920, f_loss: 1.381, PIR: 0.063, IR: 0.403, RRE: 23.134, RTE: 0.096, RMSE: 0.143, RR: 0.000, lr: 1.576e-05, time: 0.067s/0.319s
+[2024-07-09 12:39:07] [INFO] Iter: 650/400000, loss: 2.274, c_loss: 0.904, f_loss: 1.370, PIR: 0.052, IR: 0.382, RRE: 20.318, RTE: 0.072, RMSE: 0.090, RR: 0.000, lr: 1.585e-05, time: 0.067s/0.319s
+[2024-07-09 12:39:10] [INFO] Iter: 660/400000, loss: 2.597, c_loss: 0.917, f_loss: 1.680, PIR: 0.085, IR: 0.415, RRE: 23.624, RTE: 0.128, RMSE: 0.114, RR: 0.000, lr: 1.594e-05, time: 0.066s/0.319s
+[2024-07-09 12:39:14] [INFO] Iter: 670/400000, loss: 2.412, c_loss: 0.907, f_loss: 1.505, PIR: 0.100, IR: 0.409, RRE: 36.426, RTE: 0.195, RMSE: 0.209, RR: 0.100, lr: 1.603e-05, time: 0.066s/0.319s
+[2024-07-09 12:39:17] [INFO] Iter: 680/400000, loss: 2.518, c_loss: 0.912, f_loss: 1.606, PIR: 0.116, IR: 0.431, RRE: 41.487, RTE: 0.315, RMSE: 0.255, RR: 0.100, lr: 1.612e-05, time: 0.065s/0.319s
+[2024-07-09 12:39:21] [INFO] Iter: 690/400000, loss: 2.278, c_loss: 0.914, f_loss: 1.364, PIR: 0.109, IR: 0.410, RRE: 16.349, RTE: 0.145, RMSE: 0.134, RR: 0.000, lr: 1.621e-05, time: 0.065s/0.319s
+[2024-07-09 12:39:24] [INFO] Iter: 700/400000, loss: 2.544, c_loss: 0.915, f_loss: 1.630, PIR: 0.087, IR: 0.468, RRE: 47.658, RTE: 0.412, RMSE: 0.245, RR: 0.000, lr: 1.630e-05, time: 0.065s/0.319s
+[2024-07-09 12:39:28] [INFO] Iter: 710/400000, loss: 2.368, c_loss: 0.914, f_loss: 1.454, PIR: 0.055, IR: 0.418, RRE: 25.183, RTE: 0.104, RMSE: 0.134, RR: 0.200, lr: 1.639e-05, time: 0.064s/0.319s
+[2024-07-09 12:39:31] [INFO] Iter: 720/400000, loss: 2.632, c_loss: 0.923, f_loss: 1.709, PIR: 0.110, IR: 0.435, RRE: 19.773, RTE: 0.100, RMSE: 0.119, RR: 0.200, lr: 1.648e-05, time: 0.064s/0.318s
+[2024-07-09 12:39:34] [INFO] Iter: 730/400000, loss: 2.191, c_loss: 0.905, f_loss: 1.286, PIR: 0.051, IR: 0.347, RRE: 21.074, RTE: 0.133, RMSE: 0.104, RR: 0.000, lr: 1.657e-05, time: 0.063s/0.318s
+[2024-07-09 12:39:38] [INFO] Iter: 740/400000, loss: 2.254, c_loss: 0.912, f_loss: 1.343, PIR: 0.045, IR: 0.372, RRE: 6.287, RTE: 0.037, RMSE: 0.049, RR: 0.000, lr: 1.666e-05, time: 0.063s/0.318s
+[2024-07-09 12:39:41] [INFO] Iter: 750/400000, loss: 2.473, c_loss: 0.899, f_loss: 1.574, PIR: 0.121, IR: 0.382, RRE: 23.912, RTE: 0.171, RMSE: 0.144, RR: 0.000, lr: 1.675e-05, time: 0.062s/0.318s
+[2024-07-09 12:39:44] [INFO] Iter: 760/400000, loss: 2.443, c_loss: 0.905, f_loss: 1.539, PIR: 0.117, IR: 0.438, RRE: 30.102, RTE: 0.151, RMSE: 0.141, RR: 0.100, lr: 1.684e-05, time: 0.062s/0.318s
+[2024-07-09 12:39:48] [INFO] Iter: 770/400000, loss: 2.594, c_loss: 0.919, f_loss: 1.675, PIR: 0.110, IR: 0.426, RRE: 24.371, RTE: 0.122, RMSE: 0.108, RR: 0.000, lr: 1.693e-05, time: 0.062s/0.317s
+[2024-07-09 12:39:51] [INFO] Iter: 780/400000, loss: 2.223, c_loss: 0.906, f_loss: 1.317, PIR: 0.063, IR: 0.387, RRE: 21.687, RTE: 0.126, RMSE: 0.075, RR: 0.200, lr: 1.702e-05, time: 0.061s/0.317s
+[2024-07-09 12:39:54] [INFO] Iter: 790/400000, loss: 2.750, c_loss: 0.917, f_loss: 1.833, PIR: 0.094, IR: 0.471, RRE: 23.329, RTE: 0.275, RMSE: 0.238, RR: 0.100, lr: 1.711e-05, time: 0.061s/0.317s
+[2024-07-09 12:39:58] [INFO] Iter: 800/400000, loss: 2.054, c_loss: 0.891, f_loss: 1.164, PIR: 0.099, IR: 0.345, RRE: 10.709, RTE: 0.078, RMSE: 0.089, RR: 0.000, lr: 1.720e-05, time: 0.061s/0.317s
+[2024-07-09 12:40:01] [INFO] Iter: 810/400000, loss: 2.185, c_loss: 0.903, f_loss: 1.282, PIR: 0.072, IR: 0.366, RRE: 20.658, RTE: 0.100, RMSE: 0.159, RR: 0.000, lr: 1.729e-05, time: 0.060s/0.317s
+[2024-07-09 12:40:05] [INFO] Iter: 820/400000, loss: 2.575, c_loss: 0.906, f_loss: 1.669, PIR: 0.123, IR: 0.461, RRE: 19.376, RTE: 0.200, RMSE: 0.068, RR: 0.000, lr: 1.738e-05, time: 0.060s/0.317s
+[2024-07-09 12:40:08] [INFO] Iter: 830/400000, loss: 2.288, c_loss: 0.905, f_loss: 1.383, PIR: 0.104, IR: 0.409, RRE: 21.576, RTE: 0.166, RMSE: 0.124, RR: 0.100, lr: 1.747e-05, time: 0.060s/0.317s
+[2024-07-09 12:40:12] [INFO] Iter: 840/400000, loss: 2.390, c_loss: 0.905, f_loss: 1.484, PIR: 0.105, IR: 0.438, RRE: 25.738, RTE: 0.253, RMSE: 0.149, RR: 0.000, lr: 1.756e-05, time: 0.059s/0.317s
+[2024-07-09 12:40:15] [INFO] Iter: 850/400000, loss: 2.310, c_loss: 0.912, f_loss: 1.397, PIR: 0.070, IR: 0.415, RRE: 18.971, RTE: 0.105, RMSE: 0.097, RR: 0.100, lr: 1.765e-05, time: 0.059s/0.317s
+[2024-07-09 12:40:19] [INFO] Iter: 860/400000, loss: 2.379, c_loss: 0.917, f_loss: 1.462, PIR: 0.116, IR: 0.383, RRE: 26.895, RTE: 0.120, RMSE: 0.108, RR: 0.000, lr: 1.774e-05, time: 0.059s/0.316s
+[2024-07-09 12:40:22] [INFO] Iter: 870/400000, loss: 2.434, c_loss: 0.912, f_loss: 1.522, PIR: 0.121, IR: 0.419, RRE: 34.782, RTE: 0.235, RMSE: 0.174, RR: 0.100, lr: 1.783e-05, time: 0.058s/0.316s
+[2024-07-09 12:40:26] [INFO] Iter: 880/400000, loss: 2.229, c_loss: 0.897, f_loss: 1.332, PIR: 0.108, IR: 0.391, RRE: 21.047, RTE: 0.080, RMSE: 0.168, RR: 0.400, lr: 1.792e-05, time: 0.058s/0.316s
+[2024-07-09 12:40:29] [INFO] Iter: 890/400000, loss: 2.348, c_loss: 0.914, f_loss: 1.434, PIR: 0.079, IR: 0.425, RRE: 41.512, RTE: 0.347, RMSE: 0.469, RR: 0.200, lr: 1.801e-05, time: 0.058s/0.316s
+[2024-07-09 12:40:32] [INFO] Iter: 900/400000, loss: 2.078, c_loss: 0.903, f_loss: 1.174, PIR: 0.054, IR: 0.358, RRE: 4.925, RTE: 0.044, RMSE: 0.054, RR: 0.000, lr: 1.810e-05, time: 0.058s/0.316s
+[2024-07-09 12:40:36] [INFO] Iter: 910/400000, loss: 2.254, c_loss: 0.896, f_loss: 1.358, PIR: 0.144, IR: 0.418, RRE: 29.541, RTE: 0.348, RMSE: 0.215, RR: 0.100, lr: 1.819e-05, time: 0.057s/0.316s
+[2024-07-09 12:40:39] [INFO] Iter: 920/400000, loss: 2.267, c_loss: 0.908, f_loss: 1.359, PIR: 0.080, IR: 0.403, RRE: 22.109, RTE: 0.176, RMSE: 0.144, RR: 0.200, lr: 1.828e-05, time: 0.057s/0.316s
+[2024-07-09 12:40:42] [INFO] Iter: 930/400000, loss: 2.416, c_loss: 0.899, f_loss: 1.517, PIR: 0.164, IR: 0.430, RRE: 24.073, RTE: 0.108, RMSE: 0.138, RR: 0.000, lr: 1.837e-05, time: 0.057s/0.315s
+[2024-07-09 12:40:46] [INFO] Iter: 940/400000, loss: 2.073, c_loss: 0.898, f_loss: 1.175, PIR: 0.059, IR: 0.390, RRE: 5.950, RTE: 0.043, RMSE: 0.047, RR: 0.100, lr: 1.846e-05, time: 0.057s/0.315s
+[2024-07-09 12:40:49] [INFO] Iter: 950/400000, loss: 2.054, c_loss: 0.891, f_loss: 1.162, PIR: 0.065, IR: 0.338, RRE: 2.973, RTE: 0.031, RMSE: 0.036, RR: 0.200, lr: 1.855e-05, time: 0.056s/0.315s
+[2024-07-09 12:40:52] [INFO] Iter: 960/400000, loss: 2.366, c_loss: 0.895, f_loss: 1.471, PIR: 0.130, IR: 0.405, RRE: 5.663, RTE: 0.058, RMSE: 0.059, RR: 0.300, lr: 1.864e-05, time: 0.056s/0.315s
+[2024-07-09 12:40:56] [INFO] Iter: 970/400000, loss: 2.359, c_loss: 0.897, f_loss: 1.463, PIR: 0.141, IR: 0.452, RRE: 7.004, RTE: 0.037, RMSE: 0.053, RR: 0.100, lr: 1.873e-05, time: 0.056s/0.315s
+[2024-07-09 12:40:59] [INFO] Iter: 980/400000, loss: 2.273, c_loss: 0.900, f_loss: 1.373, PIR: 0.112, IR: 0.405, RRE: 7.741, RTE: 0.097, RMSE: 0.071, RR: 0.100, lr: 1.882e-05, time: 0.056s/0.315s
+[2024-07-09 12:41:03] [INFO] Iter: 990/400000, loss: 2.253, c_loss: 0.892, f_loss: 1.361, PIR: 0.134, IR: 0.425, RRE: 19.798, RTE: 0.271, RMSE: 0.191, RR: 0.100, lr: 1.891e-05, time: 0.056s/0.315s
+[2024-07-09 12:41:06] [INFO] Iter: 1000/400000, loss: 2.260, c_loss: 0.908, f_loss: 1.353, PIR: 0.089, IR: 0.415, RRE: 9.947, RTE: 0.144, RMSE: 0.143, RR: 0.200, lr: 1.900e-05, time: 0.055s/0.315s
+[2024-07-09 12:41:10] [INFO] Iter: 1010/400000, loss: 2.091, c_loss: 0.894, f_loss: 1.197, PIR: 0.080, IR: 0.363, RRE: 3.100, RTE: 0.022, RMSE: 0.030, RR: 0.200, lr: 1.909e-05, time: 0.055s/0.315s
+[2024-07-09 12:41:14] [INFO] Iter: 1020/400000, loss: 2.358, c_loss: 0.897, f_loss: 1.460, PIR: 0.128, IR: 0.434, RRE: 21.690, RTE: 0.158, RMSE: 0.086, RR: 0.100, lr: 1.918e-05, time: 0.055s/0.315s
+[2024-07-09 12:41:17] [INFO] Iter: 1030/400000, loss: 2.539, c_loss: 0.903, f_loss: 1.636, PIR: 0.147, IR: 0.406, RRE: 14.832, RTE: 0.156, RMSE: 0.103, RR: 0.000, lr: 1.927e-05, time: 0.055s/0.316s
+[2024-07-09 12:41:21] [INFO] Iter: 1040/400000, loss: 2.503, c_loss: 0.914, f_loss: 1.589, PIR: 0.091, IR: 0.464, RRE: 35.673, RTE: 0.315, RMSE: 0.234, RR: 0.300, lr: 1.936e-05, time: 0.055s/0.315s
+[2024-07-09 12:41:24] [INFO] Iter: 1050/400000, loss: 2.278, c_loss: 0.895, f_loss: 1.384, PIR: 0.102, IR: 0.416, RRE: 9.021, RTE: 0.046, RMSE: 0.058, RR: 0.200, lr: 1.945e-05, time: 0.054s/0.315s
+[2024-07-09 12:41:28] [INFO] Iter: 1060/400000, loss: 2.321, c_loss: 0.904, f_loss: 1.417, PIR: 0.140, IR: 0.443, RRE: 13.386, RTE: 0.119, RMSE: 0.085, RR: 0.200, lr: 1.954e-05, time: 0.054s/0.315s
+[2024-07-09 12:41:31] [INFO] Iter: 1070/400000, loss: 2.236, c_loss: 0.893, f_loss: 1.343, PIR: 0.115, IR: 0.418, RRE: 20.430, RTE: 0.096, RMSE: 0.062, RR: 0.100, lr: 1.963e-05, time: 0.054s/0.315s
+[2024-07-09 12:41:35] [INFO] Iter: 1080/400000, loss: 2.495, c_loss: 0.910, f_loss: 1.585, PIR: 0.130, IR: 0.452, RRE: 47.638, RTE: 0.402, RMSE: 0.300, RR: 0.000, lr: 1.972e-05, time: 0.054s/0.316s
+[2024-07-09 12:41:39] [INFO] Iter: 1090/400000, loss: 2.168, c_loss: 0.897, f_loss: 1.271, PIR: 0.078, IR: 0.398, RRE: 4.268, RTE: 0.050, RMSE: 0.053, RR: 0.200, lr: 1.981e-05, time: 0.054s/0.316s
+[2024-07-09 12:41:42] [INFO] Iter: 1100/400000, loss: 2.355, c_loss: 0.902, f_loss: 1.453, PIR: 0.131, IR: 0.446, RRE: 4.963, RTE: 0.056, RMSE: 0.048, RR: 0.100, lr: 1.990e-05, time: 0.053s/0.316s
+[2024-07-09 12:41:45] [INFO] Iter: 1110/400000, loss: 2.217, c_loss: 0.905, f_loss: 1.312, PIR: 0.071, IR: 0.391, RRE: 19.965, RTE: 0.187, RMSE: 0.155, RR: 0.100, lr: 1.999e-05, time: 0.053s/0.316s
+[2024-07-09 12:41:49] [INFO] Iter: 1120/400000, loss: 2.650, c_loss: 0.900, f_loss: 1.750, PIR: 0.134, IR: 0.465, RRE: 46.114, RTE: 0.232, RMSE: 0.212, RR: 0.100, lr: 2.008e-05, time: 0.053s/0.316s
+[2024-07-09 12:41:52] [INFO] Iter: 1130/400000, loss: 2.353, c_loss: 0.899, f_loss: 1.454, PIR: 0.152, IR: 0.393, RRE: 7.299, RTE: 0.080, RMSE: 0.057, RR: 0.100, lr: 2.017e-05, time: 0.053s/0.315s
+[2024-07-09 12:41:56] [INFO] Iter: 1140/400000, loss: 2.290, c_loss: 0.903, f_loss: 1.387, PIR: 0.111, IR: 0.418, RRE: 11.651, RTE: 0.051, RMSE: 0.108, RR: 0.000, lr: 2.026e-05, time: 0.053s/0.316s
+[2024-07-09 12:41:59] [INFO] Iter: 1150/400000, loss: 2.270, c_loss: 0.900, f_loss: 1.370, PIR: 0.074, IR: 0.417, RRE: 10.661, RTE: 0.097, RMSE: 0.075, RR: 0.100, lr: 2.035e-05, time: 0.053s/0.316s
+[2024-07-09 12:42:03] [INFO] Iter: 1160/400000, loss: 2.313, c_loss: 0.891, f_loss: 1.422, PIR: 0.101, IR: 0.425, RRE: 13.102, RTE: 0.197, RMSE: 0.164, RR: 0.000, lr: 2.044e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:06] [INFO] Iter: 1170/400000, loss: 2.338, c_loss: 0.904, f_loss: 1.434, PIR: 0.084, IR: 0.419, RRE: 5.782, RTE: 0.069, RMSE: 0.066, RR: 0.100, lr: 2.053e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:10] [INFO] Iter: 1180/400000, loss: 2.176, c_loss: 0.900, f_loss: 1.276, PIR: 0.080, IR: 0.381, RRE: 3.039, RTE: 0.035, RMSE: 0.037, RR: 0.100, lr: 2.062e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:14] [INFO] Iter: 1190/400000, loss: 2.365, c_loss: 0.899, f_loss: 1.465, PIR: 0.138, IR: 0.466, RRE: 3.279, RTE: 0.037, RMSE: 0.027, RR: 0.200, lr: 2.071e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:17] [INFO] Iter: 1200/400000, loss: 2.424, c_loss: 0.908, f_loss: 1.516, PIR: 0.105, IR: 0.441, RRE: 4.516, RTE: 0.045, RMSE: 0.039, RR: 0.000, lr: 2.080e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:21] [INFO] Iter: 1210/400000, loss: 2.389, c_loss: 0.896, f_loss: 1.493, PIR: 0.149, IR: 0.450, RRE: 7.226, RTE: 0.066, RMSE: 0.044, RR: 0.200, lr: 2.089e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:24] [INFO] Iter: 1220/400000, loss: 2.404, c_loss: 0.901, f_loss: 1.503, PIR: 0.123, IR: 0.458, RRE: 3.862, RTE: 0.039, RMSE: 0.036, RR: 0.000, lr: 2.098e-05, time: 0.052s/0.316s
+[2024-07-09 12:42:28] [INFO] Iter: 1230/400000, loss: 2.569, c_loss: 0.917, f_loss: 1.652, PIR: 0.095, IR: 0.468, RRE: 36.956, RTE: 0.307, RMSE: 0.206, RR: 0.200, lr: 2.107e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:31] [INFO] Iter: 1240/400000, loss: 2.241, c_loss: 0.897, f_loss: 1.344, PIR: 0.088, IR: 0.391, RRE: 6.911, RTE: 0.089, RMSE: 0.073, RR: 0.000, lr: 2.116e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:35] [INFO] Iter: 1250/400000, loss: 2.327, c_loss: 0.905, f_loss: 1.421, PIR: 0.095, IR: 0.376, RRE: 15.627, RTE: 0.121, RMSE: 0.062, RR: 0.100, lr: 2.125e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:38] [INFO] Iter: 1260/400000, loss: 2.059, c_loss: 0.891, f_loss: 1.168, PIR: 0.095, IR: 0.381, RRE: 4.044, RTE: 0.044, RMSE: 0.039, RR: 0.000, lr: 2.134e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:42] [INFO] Iter: 1270/400000, loss: 2.324, c_loss: 0.902, f_loss: 1.423, PIR: 0.148, IR: 0.439, RRE: 5.067, RTE: 0.053, RMSE: 0.047, RR: 0.200, lr: 2.143e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:45] [INFO] Iter: 1280/400000, loss: 2.701, c_loss: 0.912, f_loss: 1.789, PIR: 0.171, IR: 0.457, RRE: 9.367, RTE: 0.118, RMSE: 0.100, RR: 0.300, lr: 2.152e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:49] [INFO] Iter: 1290/400000, loss: 2.259, c_loss: 0.898, f_loss: 1.361, PIR: 0.113, IR: 0.393, RRE: 16.742, RTE: 0.106, RMSE: 0.053, RR: 0.000, lr: 2.161e-05, time: 0.051s/0.316s
+[2024-07-09 12:42:52] [INFO] Iter: 1300/400000, loss: 2.290, c_loss: 0.894, f_loss: 1.396, PIR: 0.120, IR: 0.419, RRE: 4.915, RTE: 0.051, RMSE: 0.061, RR: 0.300, lr: 2.170e-05, time: 0.050s/0.316s
+[2024-07-09 12:42:55] [INFO] Iter: 1310/400000, loss: 2.315, c_loss: 0.895, f_loss: 1.419, PIR: 0.116, IR: 0.423, RRE: 5.850, RTE: 0.054, RMSE: 0.062, RR: 0.100, lr: 2.179e-05, time: 0.050s/0.316s
+[2024-07-09 12:42:59] [INFO] Iter: 1320/400000, loss: 2.160, c_loss: 0.894, f_loss: 1.266, PIR: 0.095, IR: 0.398, RRE: 17.101, RTE: 0.118, RMSE: 0.125, RR: 0.200, lr: 2.188e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:02] [INFO] Iter: 1330/400000, loss: 2.214, c_loss: 0.896, f_loss: 1.319, PIR: 0.097, IR: 0.422, RRE: 20.398, RTE: 0.216, RMSE: 0.109, RR: 0.100, lr: 2.197e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:06] [INFO] Iter: 1340/400000, loss: 2.100, c_loss: 0.889, f_loss: 1.211, PIR: 0.098, IR: 0.370, RRE: 8.434, RTE: 0.092, RMSE: 0.045, RR: 0.200, lr: 2.206e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:10] [INFO] Iter: 1350/400000, loss: 2.158, c_loss: 0.897, f_loss: 1.261, PIR: 0.073, IR: 0.372, RRE: 5.278, RTE: 0.047, RMSE: 0.046, RR: 0.200, lr: 2.215e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:13] [INFO] Iter: 1360/400000, loss: 2.154, c_loss: 0.882, f_loss: 1.272, PIR: 0.163, IR: 0.435, RRE: 1.878, RTE: 0.022, RMSE: 0.022, RR: 0.300, lr: 2.224e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:17] [INFO] Iter: 1370/400000, loss: 2.306, c_loss: 0.896, f_loss: 1.411, PIR: 0.138, IR: 0.423, RRE: 23.298, RTE: 0.130, RMSE: 0.123, RR: 0.200, lr: 2.233e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:20] [INFO] Iter: 1380/400000, loss: 2.184, c_loss: 0.901, f_loss: 1.283, PIR: 0.112, IR: 0.419, RRE: 3.886, RTE: 0.031, RMSE: 0.040, RR: 0.100, lr: 2.242e-05, time: 0.050s/0.316s
+[2024-07-09 12:43:24] [INFO] Iter: 1390/400000, loss: 2.339, c_loss: 0.898, f_loss: 1.441, PIR: 0.113, IR: 0.456, RRE: 3.086, RTE: 0.037, RMSE: 0.029, RR: 0.100, lr: 2.251e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:27] [INFO] Iter: 1400/400000, loss: 2.448, c_loss: 0.912, f_loss: 1.537, PIR: 0.098, IR: 0.435, RRE: 26.996, RTE: 0.240, RMSE: 0.191, RR: 0.200, lr: 2.260e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:31] [INFO] Iter: 1410/400000, loss: 2.177, c_loss: 0.906, f_loss: 1.271, PIR: 0.081, IR: 0.406, RRE: 2.638, RTE: 0.017, RMSE: 0.027, RR: 0.300, lr: 2.269e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:34] [INFO] Iter: 1420/400000, loss: 2.155, c_loss: 0.894, f_loss: 1.261, PIR: 0.097, IR: 0.409, RRE: 2.567, RTE: 0.013, RMSE: 0.023, RR: 0.200, lr: 2.278e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:38] [INFO] Iter: 1430/400000, loss: 2.302, c_loss: 0.900, f_loss: 1.402, PIR: 0.123, IR: 0.438, RRE: 3.594, RTE: 0.028, RMSE: 0.035, RR: 0.200, lr: 2.287e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:41] [INFO] Iter: 1440/400000, loss: 2.307, c_loss: 0.919, f_loss: 1.388, PIR: 0.103, IR: 0.434, RRE: 4.081, RTE: 0.033, RMSE: 0.041, RR: 0.100, lr: 2.296e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:45] [INFO] Iter: 1450/400000, loss: 2.296, c_loss: 0.900, f_loss: 1.396, PIR: 0.138, IR: 0.450, RRE: 18.458, RTE: 0.105, RMSE: 0.061, RR: 0.000, lr: 2.305e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:48] [INFO] Iter: 1460/400000, loss: 2.299, c_loss: 0.894, f_loss: 1.405, PIR: 0.144, IR: 0.457, RRE: 20.531, RTE: 0.209, RMSE: 0.150, RR: 0.300, lr: 2.314e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:52] [INFO] Iter: 1470/400000, loss: 2.142, c_loss: 0.893, f_loss: 1.249, PIR: 0.105, IR: 0.402, RRE: 3.781, RTE: 0.027, RMSE: 0.039, RR: 0.000, lr: 2.323e-05, time: 0.049s/0.316s
+[2024-07-09 12:43:55] [INFO] Iter: 1480/400000, loss: 2.337, c_loss: 0.889, f_loss: 1.448, PIR: 0.121, IR: 0.401, RRE: 21.600, RTE: 0.065, RMSE: 0.095, RR: 0.100, lr: 2.332e-05, time: 0.048s/0.316s
+[2024-07-09 12:43:58] [INFO] Iter: 1490/400000, loss: 2.290, c_loss: 0.900, f_loss: 1.390, PIR: 0.095, IR: 0.412, RRE: 4.283, RTE: 0.059, RMSE: 0.051, RR: 0.100, lr: 2.341e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:02] [INFO] Iter: 1500/400000, loss: 2.324, c_loss: 0.898, f_loss: 1.426, PIR: 0.119, IR: 0.454, RRE: 3.039, RTE: 0.038, RMSE: 0.033, RR: 0.200, lr: 2.350e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:05] [INFO] Iter: 1510/400000, loss: 2.375, c_loss: 0.896, f_loss: 1.479, PIR: 0.160, IR: 0.429, RRE: 4.128, RTE: 0.049, RMSE: 0.044, RR: 0.200, lr: 2.359e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:09] [INFO] Iter: 1520/400000, loss: 2.726, c_loss: 0.910, f_loss: 1.816, PIR: 0.146, IR: 0.483, RRE: 2.091, RTE: 0.031, RMSE: 0.029, RR: 0.300, lr: 2.368e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:12] [INFO] Iter: 1530/400000, loss: 2.303, c_loss: 0.903, f_loss: 1.400, PIR: 0.119, IR: 0.426, RRE: 5.558, RTE: 0.048, RMSE: 0.044, RR: 0.000, lr: 2.377e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:16] [INFO] Iter: 1540/400000, loss: 2.249, c_loss: 0.897, f_loss: 1.352, PIR: 0.089, IR: 0.433, RRE: 14.740, RTE: 0.084, RMSE: 0.108, RR: 0.100, lr: 2.386e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:20] [INFO] Iter: 1550/400000, loss: 2.401, c_loss: 0.893, f_loss: 1.508, PIR: 0.123, IR: 0.456, RRE: 11.866, RTE: 0.115, RMSE: 0.068, RR: 0.000, lr: 2.395e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:23] [INFO] Iter: 1560/400000, loss: 2.251, c_loss: 0.898, f_loss: 1.354, PIR: 0.120, IR: 0.412, RRE: 12.295, RTE: 0.045, RMSE: 0.054, RR: 0.100, lr: 2.404e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:26] [INFO] Iter: 1570/400000, loss: 2.756, c_loss: 0.914, f_loss: 1.843, PIR: 0.134, IR: 0.527, RRE: 27.094, RTE: 0.312, RMSE: 0.213, RR: 0.300, lr: 2.413e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:30] [INFO] Iter: 1580/400000, loss: 2.334, c_loss: 0.899, f_loss: 1.434, PIR: 0.104, IR: 0.420, RRE: 17.543, RTE: 0.080, RMSE: 0.088, RR: 0.000, lr: 2.422e-05, time: 0.048s/0.316s
+[2024-07-09 12:44:33] [INFO] Iter: 1590/400000, loss: 2.110, c_loss: 0.888, f_loss: 1.222, PIR: 0.108, IR: 0.400, RRE: 3.997, RTE: 0.055, RMSE: 0.046, RR: 0.100, lr: 2.431e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:37] [INFO] Iter: 1600/400000, loss: 2.453, c_loss: 0.915, f_loss: 1.538, PIR: 0.156, IR: 0.465, RRE: 16.780, RTE: 0.141, RMSE: 0.127, RR: 0.100, lr: 2.440e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:40] [INFO] Iter: 1610/400000, loss: 2.115, c_loss: 0.898, f_loss: 1.217, PIR: 0.098, IR: 0.407, RRE: 15.008, RTE: 0.103, RMSE: 0.097, RR: 0.100, lr: 2.449e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:44] [INFO] Iter: 1620/400000, loss: 2.284, c_loss: 0.903, f_loss: 1.381, PIR: 0.105, IR: 0.439, RRE: 3.315, RTE: 0.039, RMSE: 0.031, RR: 0.100, lr: 2.458e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:47] [INFO] Iter: 1630/400000, loss: 2.461, c_loss: 0.906, f_loss: 1.555, PIR: 0.111, IR: 0.484, RRE: 18.062, RTE: 0.150, RMSE: 0.078, RR: 0.300, lr: 2.467e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:51] [INFO] Iter: 1640/400000, loss: 2.446, c_loss: 0.900, f_loss: 1.545, PIR: 0.127, IR: 0.417, RRE: 19.256, RTE: 0.102, RMSE: 0.093, RR: 0.000, lr: 2.476e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:54] [INFO] Iter: 1650/400000, loss: 2.010, c_loss: 0.897, f_loss: 1.113, PIR: 0.109, IR: 0.412, RRE: 3.708, RTE: 0.040, RMSE: 0.034, RR: 0.000, lr: 2.485e-05, time: 0.047s/0.316s
+[2024-07-09 12:44:58] [INFO] Iter: 1660/400000, loss: 2.244, c_loss: 0.897, f_loss: 1.347, PIR: 0.120, IR: 0.420, RRE: 6.979, RTE: 0.038, RMSE: 0.070, RR: 0.100, lr: 2.494e-05, time: 0.047s/0.316s
+[2024-07-09 12:45:01] [INFO] Iter: 1670/400000, loss: 2.090, c_loss: 0.888, f_loss: 1.202, PIR: 0.118, IR: 0.412, RRE: 1.955, RTE: 0.023, RMSE: 0.020, RR: 0.200, lr: 2.503e-05, time: 0.047s/0.316s
+[2024-07-09 12:45:05] [INFO] Iter: 1680/400000, loss: 2.326, c_loss: 0.893, f_loss: 1.433, PIR: 0.148, IR: 0.465, RRE: 3.007, RTE: 0.037, RMSE: 0.027, RR: 0.200, lr: 2.512e-05, time: 0.047s/0.315s
+[2024-07-09 12:45:08] [INFO] Iter: 1690/400000, loss: 2.378, c_loss: 0.892, f_loss: 1.486, PIR: 0.162, IR: 0.463, RRE: 2.367, RTE: 0.027, RMSE: 0.028, RR: 0.300, lr: 2.521e-05, time: 0.047s/0.316s
+[2024-07-09 12:45:11] [INFO] Iter: 1700/400000, loss: 2.436, c_loss: 0.903, f_loss: 1.533, PIR: 0.150, IR: 0.447, RRE: 4.641, RTE: 0.031, RMSE: 0.042, RR: 0.100, lr: 2.530e-05, time: 0.047s/0.315s
+[2024-07-09 12:45:15] [INFO] Iter: 1710/400000, loss: 2.079, c_loss: 0.896, f_loss: 1.183, PIR: 0.095, IR: 0.406, RRE: 2.739, RTE: 0.041, RMSE: 0.040, RR: 0.400, lr: 2.539e-05, time: 0.047s/0.315s
+[2024-07-09 12:45:18] [INFO] Iter: 1720/400000, loss: 2.155, c_loss: 0.891, f_loss: 1.264, PIR: 0.140, IR: 0.402, RRE: 5.806, RTE: 0.043, RMSE: 0.048, RR: 0.000, lr: 2.548e-05, time: 0.046s/0.315s
+[2024-07-09 12:45:22] [INFO] Iter: 1730/400000, loss: 2.213, c_loss: 0.890, f_loss: 1.323, PIR: 0.114, IR: 0.410, RRE: 2.716, RTE: 0.037, RMSE: 0.027, RR: 0.000, lr: 2.557e-05, time: 0.046s/0.315s
+[2024-07-09 12:45:26] [INFO] Iter: 1740/400000, loss: 2.215, c_loss: 0.890, f_loss: 1.325, PIR: 0.109, IR: 0.424, RRE: 3.301, RTE: 0.037, RMSE: 0.026, RR: 0.100, lr: 2.566e-05, time: 0.046s/0.316s
+[2024-07-09 12:45:29] [INFO] Iter: 1750/400000, loss: 2.503, c_loss: 0.912, f_loss: 1.591, PIR: 0.153, IR: 0.449, RRE: 20.563, RTE: 0.053, RMSE: 0.077, RR: 0.100, lr: 2.575e-05, time: 0.046s/0.316s
+[2024-07-09 12:45:33] [INFO] Iter: 1760/400000, loss: 2.303, c_loss: 0.904, f_loss: 1.399, PIR: 0.109, IR: 0.453, RRE: 4.647, RTE: 0.077, RMSE: 0.048, RR: 0.300, lr: 2.584e-05, time: 0.046s/0.316s
+[2024-07-09 12:45:36] [INFO] Iter: 1770/400000, loss: 2.693, c_loss: 0.912, f_loss: 1.781, PIR: 0.145, IR: 0.503, RRE: 29.067, RTE: 0.207, RMSE: 0.204, RR: 0.200, lr: 2.593e-05, time: 0.046s/0.316s
+[2024-07-09 12:45:39] [INFO] Iter: 1780/400000, loss: 2.162, c_loss: 0.890, f_loss: 1.272, PIR: 0.168, IR: 0.419, RRE: 2.560, RTE: 0.026, RMSE: 0.025, RR: 0.100, lr: 2.602e-05, time: 0.046s/0.315s
+[2024-07-09 12:45:43] [INFO] Iter: 1790/400000, loss: 2.311, c_loss: 0.888, f_loss: 1.423, PIR: 0.145, IR: 0.428, RRE: 2.694, RTE: 0.020, RMSE: 0.028, RR: 0.200, lr: 2.611e-05, time: 0.046s/0.315s
+[2024-07-09 12:45:46] [INFO] Iter: 1800/400000, loss: 2.572, c_loss: 0.898, f_loss: 1.674, PIR: 0.131, IR: 0.462, RRE: 2.147, RTE: 0.018, RMSE: 0.022, RR: 0.100, lr: 2.620e-05, time: 0.046s/0.315s
+[2024-07-09 12:45:50] [INFO] Iter: 1810/400000, loss: 2.428, c_loss: 0.886, f_loss: 1.541, PIR: 0.203, IR: 0.474, RRE: 11.833, RTE: 0.065, RMSE: 0.054, RR: 0.100, lr: 2.629e-05, time: 0.046s/0.316s
+[2024-07-09 12:45:54] [INFO] Iter: 1820/400000, loss: 2.485, c_loss: 0.905, f_loss: 1.580, PIR: 0.118, IR: 0.460, RRE: 4.068, RTE: 0.037, RMSE: 0.038, RR: 0.000, lr: 2.638e-05, time: 0.046s/0.316s
+[2024-07-09 12:45:57] [INFO] Iter: 1830/400000, loss: 2.549, c_loss: 0.903, f_loss: 1.646, PIR: 0.159, IR: 0.454, RRE: 6.779, RTE: 0.068, RMSE: 0.055, RR: 0.200, lr: 2.647e-05, time: 0.046s/0.316s
+[2024-07-09 12:46:01] [INFO] Iter: 1840/400000, loss: 2.414, c_loss: 0.895, f_loss: 1.519, PIR: 0.143, IR: 0.452, RRE: 16.095, RTE: 0.177, RMSE: 0.099, RR: 0.000, lr: 2.656e-05, time: 0.046s/0.316s
+[2024-07-09 12:46:04] [INFO] Iter: 1850/400000, loss: 2.019, c_loss: 0.892, f_loss: 1.127, PIR: 0.085, IR: 0.394, RRE: 2.167, RTE: 0.025, RMSE: 0.028, RR: 0.300, lr: 2.665e-05, time: 0.046s/0.316s
+[2024-07-09 12:46:08] [INFO] Iter: 1860/400000, loss: 2.091, c_loss: 0.885, f_loss: 1.206, PIR: 0.138, IR: 0.410, RRE: 10.047, RTE: 0.096, RMSE: 0.067, RR: 0.000, lr: 2.674e-05, time: 0.045s/0.316s
+[2024-07-09 12:46:12] [INFO] Iter: 1870/400000, loss: 2.220, c_loss: 0.905, f_loss: 1.315, PIR: 0.113, IR: 0.445, RRE: 1.834, RTE: 0.017, RMSE: 0.019, RR: 0.300, lr: 2.683e-05, time: 0.045s/0.316s
+[2024-07-09 12:46:16] [INFO] Iter: 1880/400000, loss: 2.477, c_loss: 0.899, f_loss: 1.578, PIR: 0.183, IR: 0.497, RRE: 9.035, RTE: 0.135, RMSE: 0.092, RR: 0.300, lr: 2.692e-05, time: 0.045s/0.316s
+[2024-07-09 12:46:20] [INFO] Iter: 1890/400000, loss: 2.331, c_loss: 0.901, f_loss: 1.430, PIR: 0.161, IR: 0.426, RRE: 30.273, RTE: 0.147, RMSE: 0.120, RR: 0.300, lr: 2.701e-05, time: 0.045s/0.316s
+[2024-07-09 12:46:24] [INFO] Iter: 1900/400000, loss: 2.523, c_loss: 0.893, f_loss: 1.629, PIR: 0.209, IR: 0.473, RRE: 2.921, RTE: 0.029, RMSE: 0.027, RR: 0.100, lr: 2.710e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:27] [INFO] Iter: 1910/400000, loss: 2.130, c_loss: 0.892, f_loss: 1.238, PIR: 0.138, IR: 0.456, RRE: 1.543, RTE: 0.022, RMSE: 0.020, RR: 0.300, lr: 2.719e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:31] [INFO] Iter: 1920/400000, loss: 2.261, c_loss: 0.895, f_loss: 1.366, PIR: 0.138, IR: 0.442, RRE: 20.466, RTE: 0.119, RMSE: 0.131, RR: 0.100, lr: 2.728e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:34] [INFO] Iter: 1930/400000, loss: 2.294, c_loss: 0.896, f_loss: 1.398, PIR: 0.130, IR: 0.433, RRE: 2.646, RTE: 0.024, RMSE: 0.028, RR: 0.200, lr: 2.737e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:38] [INFO] Iter: 1940/400000, loss: 2.164, c_loss: 0.899, f_loss: 1.265, PIR: 0.094, IR: 0.421, RRE: 2.698, RTE: 0.032, RMSE: 0.024, RR: 0.000, lr: 2.746e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:41] [INFO] Iter: 1950/400000, loss: 2.344, c_loss: 0.894, f_loss: 1.450, PIR: 0.126, IR: 0.471, RRE: 5.327, RTE: 0.037, RMSE: 0.031, RR: 0.100, lr: 2.755e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:45] [INFO] Iter: 1960/400000, loss: 2.500, c_loss: 0.900, f_loss: 1.599, PIR: 0.145, IR: 0.475, RRE: 13.714, RTE: 0.112, RMSE: 0.046, RR: 0.200, lr: 2.764e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:48] [INFO] Iter: 1970/400000, loss: 2.388, c_loss: 0.895, f_loss: 1.493, PIR: 0.162, IR: 0.479, RRE: 2.183, RTE: 0.026, RMSE: 0.020, RR: 0.000, lr: 2.773e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:52] [INFO] Iter: 1980/400000, loss: 2.132, c_loss: 0.904, f_loss: 1.228, PIR: 0.109, IR: 0.440, RRE: 2.488, RTE: 0.021, RMSE: 0.024, RR: 0.100, lr: 2.782e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:55] [INFO] Iter: 1990/400000, loss: 2.177, c_loss: 0.891, f_loss: 1.285, PIR: 0.159, IR: 0.405, RRE: 3.414, RTE: 0.029, RMSE: 0.030, RR: 0.400, lr: 2.791e-05, time: 0.045s/0.317s
+[2024-07-09 12:46:59] [INFO] Iter: 2000/400000, loss: 2.576, c_loss: 0.911, f_loss: 1.665, PIR: 0.141, IR: 0.466, RRE: 8.088, RTE: 0.050, RMSE: 0.057, RR: 0.100, lr: 2.800e-05, time: 0.045s/0.317s
+[2024-07-09 12:47:02] [INFO] Iter: 2010/400000, loss: 2.099, c_loss: 0.881, f_loss: 1.218, PIR: 0.132, IR: 0.419, RRE: 13.939, RTE: 0.088, RMSE: 0.086, RR: 0.100, lr: 2.809e-05, time: 0.045s/0.317s
+[2024-07-09 12:47:06] [INFO] Iter: 2020/400000, loss: 2.305, c_loss: 0.891, f_loss: 1.415, PIR: 0.163, IR: 0.461, RRE: 1.666, RTE: 0.023, RMSE: 0.022, RR: 0.300, lr: 2.818e-05, time: 0.045s/0.317s
+[2024-07-09 12:47:09] [INFO] Iter: 2030/400000, loss: 2.263, c_loss: 0.906, f_loss: 1.356, PIR: 0.109, IR: 0.453, RRE: 2.208, RTE: 0.019, RMSE: 0.021, RR: 0.100, lr: 2.827e-05, time: 0.045s/0.317s
+[2024-07-09 12:47:13] [INFO] Iter: 2040/400000, loss: 2.268, c_loss: 0.894, f_loss: 1.374, PIR: 0.134, IR: 0.453, RRE: 2.010, RTE: 0.027, RMSE: 0.025, RR: 0.300, lr: 2.836e-05, time: 0.045s/0.317s
+[2024-07-09 12:47:16] [INFO] Iter: 2050/400000, loss: 2.210, c_loss: 0.894, f_loss: 1.316, PIR: 0.100, IR: 0.465, RRE: 1.904, RTE: 0.023, RMSE: 0.022, RR: 0.300, lr: 2.845e-05, time: 0.045s/0.317s
+[2024-07-09 12:47:20] [INFO] Iter: 2060/400000, loss: 2.075, c_loss: 0.880, f_loss: 1.195, PIR: 0.151, IR: 0.394, RRE: 4.610, RTE: 0.041, RMSE: 0.044, RR: 0.000, lr: 2.854e-05, time: 0.044s/0.317s
+[2024-07-09 12:47:23] [INFO] Iter: 2070/400000, loss: 2.164, c_loss: 0.895, f_loss: 1.270, PIR: 0.138, IR: 0.434, RRE: 3.272, RTE: 0.034, RMSE: 0.026, RR: 0.200, lr: 2.863e-05, time: 0.044s/0.317s
+[2024-07-09 12:47:27] [INFO] Iter: 2080/400000, loss: 2.114, c_loss: 0.895, f_loss: 1.219, PIR: 0.138, IR: 0.394, RRE: 2.103, RTE: 0.022, RMSE: 0.022, RR: 0.100, lr: 2.872e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:30] [INFO] Iter: 2090/400000, loss: 2.230, c_loss: 0.893, f_loss: 1.337, PIR: 0.138, IR: 0.438, RRE: 3.309, RTE: 0.024, RMSE: 0.027, RR: 0.100, lr: 2.881e-05, time: 0.044s/0.317s
+[2024-07-09 12:47:33] [INFO] Iter: 2100/400000, loss: 2.211, c_loss: 0.889, f_loss: 1.322, PIR: 0.109, IR: 0.475, RRE: 2.296, RTE: 0.034, RMSE: 0.028, RR: 0.300, lr: 2.890e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:37] [INFO] Iter: 2110/400000, loss: 2.343, c_loss: 0.906, f_loss: 1.437, PIR: 0.135, IR: 0.468, RRE: 3.328, RTE: 0.030, RMSE: 0.032, RR: 0.100, lr: 2.899e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:40] [INFO] Iter: 2120/400000, loss: 2.002, c_loss: 0.896, f_loss: 1.106, PIR: 0.076, IR: 0.416, RRE: 3.077, RTE: 0.026, RMSE: 0.029, RR: 0.300, lr: 2.908e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:44] [INFO] Iter: 2130/400000, loss: 2.124, c_loss: 0.886, f_loss: 1.237, PIR: 0.144, IR: 0.426, RRE: 5.340, RTE: 0.059, RMSE: 0.041, RR: 0.000, lr: 2.917e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:48] [INFO] Iter: 2140/400000, loss: 2.263, c_loss: 0.900, f_loss: 1.363, PIR: 0.129, IR: 0.426, RRE: 1.679, RTE: 0.017, RMSE: 0.019, RR: 0.200, lr: 2.926e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:51] [INFO] Iter: 2150/400000, loss: 2.366, c_loss: 0.906, f_loss: 1.460, PIR: 0.117, IR: 0.475, RRE: 3.985, RTE: 0.022, RMSE: 0.042, RR: 0.200, lr: 2.935e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:55] [INFO] Iter: 2160/400000, loss: 2.187, c_loss: 0.902, f_loss: 1.284, PIR: 0.117, IR: 0.412, RRE: 2.879, RTE: 0.021, RMSE: 0.028, RR: 0.200, lr: 2.944e-05, time: 0.044s/0.316s
+[2024-07-09 12:47:58] [INFO] Iter: 2170/400000, loss: 2.031, c_loss: 0.881, f_loss: 1.149, PIR: 0.125, IR: 0.422, RRE: 2.700, RTE: 0.032, RMSE: 0.029, RR: 0.200, lr: 2.953e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:02] [INFO] Iter: 2180/400000, loss: 2.282, c_loss: 0.879, f_loss: 1.403, PIR: 0.128, IR: 0.433, RRE: 15.594, RTE: 0.060, RMSE: 0.094, RR: 0.400, lr: 2.962e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:05] [INFO] Iter: 2190/400000, loss: 2.135, c_loss: 0.891, f_loss: 1.244, PIR: 0.171, IR: 0.427, RRE: 1.886, RTE: 0.021, RMSE: 0.019, RR: 0.200, lr: 2.971e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:09] [INFO] Iter: 2200/400000, loss: 2.369, c_loss: 0.890, f_loss: 1.479, PIR: 0.172, IR: 0.462, RRE: 2.193, RTE: 0.027, RMSE: 0.028, RR: 0.400, lr: 2.980e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:12] [INFO] Iter: 2210/400000, loss: 2.491, c_loss: 0.905, f_loss: 1.586, PIR: 0.127, IR: 0.461, RRE: 9.164, RTE: 0.073, RMSE: 0.061, RR: 0.200, lr: 2.989e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:16] [INFO] Iter: 2220/400000, loss: 2.151, c_loss: 0.899, f_loss: 1.252, PIR: 0.103, IR: 0.449, RRE: 2.755, RTE: 0.021, RMSE: 0.028, RR: 0.100, lr: 2.998e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:19] [INFO] Iter: 2230/400000, loss: 2.498, c_loss: 0.895, f_loss: 1.602, PIR: 0.210, IR: 0.468, RRE: 3.260, RTE: 0.037, RMSE: 0.034, RR: 0.200, lr: 3.007e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:22] [INFO] Iter: 2240/400000, loss: 2.405, c_loss: 0.897, f_loss: 1.507, PIR: 0.136, IR: 0.452, RRE: 18.211, RTE: 0.105, RMSE: 0.110, RR: 0.100, lr: 3.016e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:26] [INFO] Iter: 2250/400000, loss: 2.219, c_loss: 0.887, f_loss: 1.332, PIR: 0.114, IR: 0.451, RRE: 4.863, RTE: 0.049, RMSE: 0.042, RR: 0.300, lr: 3.025e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:29] [INFO] Iter: 2260/400000, loss: 2.357, c_loss: 0.893, f_loss: 1.464, PIR: 0.142, IR: 0.466, RRE: 7.893, RTE: 0.073, RMSE: 0.056, RR: 0.200, lr: 3.034e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:33] [INFO] Iter: 2270/400000, loss: 2.540, c_loss: 0.894, f_loss: 1.647, PIR: 0.240, IR: 0.493, RRE: 3.016, RTE: 0.024, RMSE: 0.020, RR: 0.100, lr: 3.043e-05, time: 0.044s/0.316s
+[2024-07-09 12:48:36] [INFO] Iter: 2280/400000, loss: 2.059, c_loss: 0.882, f_loss: 1.177, PIR: 0.145, IR: 0.400, RRE: 2.466, RTE: 0.030, RMSE: 0.029, RR: 0.200, lr: 3.052e-05, time: 0.043s/0.316s
+[2024-07-09 12:48:40] [INFO] Iter: 2290/400000, loss: 2.267, c_loss: 0.883, f_loss: 1.383, PIR: 0.164, IR: 0.444, RRE: 9.985, RTE: 0.083, RMSE: 0.069, RR: 0.100, lr: 3.061e-05, time: 0.043s/0.316s
+[2024-07-09 12:48:43] [INFO] Iter: 2300/400000, loss: 2.329, c_loss: 0.898, f_loss: 1.431, PIR: 0.148, IR: 0.450, RRE: 10.798, RTE: 0.100, RMSE: 0.070, RR: 0.200, lr: 3.070e-05, time: 0.043s/0.316s
+[2024-07-09 12:48:47] [INFO] Iter: 2310/400000, loss: 2.198, c_loss: 0.887, f_loss: 1.311, PIR: 0.130, IR: 0.431, RRE: 3.134, RTE: 0.023, RMSE: 0.024, RR: 0.300, lr: 3.079e-05, time: 0.043s/0.316s
+[2024-07-09 12:48:50] [INFO] Iter: 2320/400000, loss: 2.414, c_loss: 0.898, f_loss: 1.516, PIR: 0.106, IR: 0.463, RRE: 12.896, RTE: 0.085, RMSE: 0.066, RR: 0.000, lr: 3.088e-05, time: 0.043s/0.316s
+[2024-07-09 12:48:54] [INFO] Iter: 2330/400000, loss: 2.340, c_loss: 0.899, f_loss: 1.442, PIR: 0.090, IR: 0.439, RRE: 8.885, RTE: 0.047, RMSE: 0.056, RR: 0.000, lr: 3.097e-05, time: 0.043s/0.316s
+[2024-07-09 12:48:57] [INFO] Iter: 2340/400000, loss: 2.528, c_loss: 0.907, f_loss: 1.621, PIR: 0.166, IR: 0.477, RRE: 1.558, RTE: 0.029, RMSE: 0.024, RR: 0.500, lr: 3.106e-05, time: 0.043s/0.316s
+[2024-07-09 12:49:01] [INFO] Iter: 2350/400000, loss: 2.483, c_loss: 0.905, f_loss: 1.578, PIR: 0.129, IR: 0.476, RRE: 15.516, RTE: 0.114, RMSE: 0.098, RR: 0.400, lr: 3.115e-05, time: 0.043s/0.316s
+[2024-07-09 12:49:04] [INFO] Iter: 2360/400000, loss: 2.174, c_loss: 0.885, f_loss: 1.289, PIR: 0.110, IR: 0.435, RRE: 8.849, RTE: 0.084, RMSE: 0.047, RR: 0.000, lr: 3.124e-05, time: 0.043s/0.316s
+[2024-07-09 12:49:08] [INFO] Iter: 2370/400000, loss: 2.159, c_loss: 0.893, f_loss: 1.265, PIR: 0.133, IR: 0.436, RRE: 1.972, RTE: 0.021, RMSE: 0.020, RR: 0.300, lr: 3.133e-05, time: 0.043s/0.316s
+[2024-07-09 12:49:11] [INFO] Iter: 2380/400000, loss: 2.555, c_loss: 0.900, f_loss: 1.655, PIR: 0.188, IR: 0.470, RRE: 2.337, RTE: 0.016, RMSE: 0.022, RR: 0.300, lr: 3.142e-05, time: 0.043s/0.316s
+[2024-07-09 12:49:15] [INFO] Iter: 2390/400000, loss: 2.106, c_loss: 0.866, f_loss: 1.240, PIR: 0.205, IR: 0.440, RRE: 4.574, RTE: 0.041, RMSE: 0.038, RR: 0.100, lr: 3.151e-05, time: 0.043s/0.316s
+[2024-07-09 12:49:19] [INFO] Iter: 2400/400000, loss: 2.248, c_loss: 0.892, f_loss: 1.356, PIR: 0.184, IR: 0.449, RRE: 4.740, RTE: 0.032, RMSE: 0.050, RR: 0.300, lr: 3.160e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:22] [INFO] Iter: 2410/400000, loss: 2.581, c_loss: 0.888, f_loss: 1.693, PIR: 0.204, IR: 0.481, RRE: 24.807, RTE: 0.117, RMSE: 0.062, RR: 0.000, lr: 3.169e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:26] [INFO] Iter: 2420/400000, loss: 2.525, c_loss: 0.891, f_loss: 1.634, PIR: 0.208, IR: 0.472, RRE: 20.209, RTE: 0.071, RMSE: 0.096, RR: 0.100, lr: 3.178e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:29] [INFO] Iter: 2430/400000, loss: 1.986, c_loss: 0.881, f_loss: 1.105, PIR: 0.118, IR: 0.423, RRE: 1.821, RTE: 0.026, RMSE: 0.028, RR: 0.300, lr: 3.187e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:33] [INFO] Iter: 2440/400000, loss: 2.282, c_loss: 0.893, f_loss: 1.389, PIR: 0.124, IR: 0.456, RRE: 2.030, RTE: 0.018, RMSE: 0.018, RR: 0.100, lr: 3.196e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:37] [INFO] Iter: 2450/400000, loss: 2.675, c_loss: 0.896, f_loss: 1.778, PIR: 0.195, IR: 0.502, RRE: 5.571, RTE: 0.035, RMSE: 0.047, RR: 0.200, lr: 3.205e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:40] [INFO] Iter: 2460/400000, loss: 2.155, c_loss: 0.884, f_loss: 1.271, PIR: 0.142, IR: 0.458, RRE: 6.896, RTE: 0.067, RMSE: 0.053, RR: 0.100, lr: 3.214e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:44] [INFO] Iter: 2470/400000, loss: 2.197, c_loss: 0.892, f_loss: 1.305, PIR: 0.128, IR: 0.441, RRE: 9.093, RTE: 0.097, RMSE: 0.088, RR: 0.300, lr: 3.223e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:47] [INFO] Iter: 2480/400000, loss: 2.350, c_loss: 0.885, f_loss: 1.466, PIR: 0.166, IR: 0.476, RRE: 3.524, RTE: 0.041, RMSE: 0.032, RR: 0.300, lr: 3.232e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:51] [INFO] Iter: 2490/400000, loss: 2.205, c_loss: 0.889, f_loss: 1.316, PIR: 0.124, IR: 0.453, RRE: 2.677, RTE: 0.024, RMSE: 0.027, RR: 0.100, lr: 3.241e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:54] [INFO] Iter: 2500/400000, loss: 2.652, c_loss: 0.897, f_loss: 1.755, PIR: 0.198, IR: 0.506, RRE: 7.805, RTE: 0.072, RMSE: 0.033, RR: 0.100, lr: 3.250e-05, time: 0.043s/0.317s
+[2024-07-09 12:49:58] [INFO] Iter: 2510/400000, loss: 2.311, c_loss: 0.889, f_loss: 1.422, PIR: 0.146, IR: 0.472, RRE: 3.797, RTE: 0.044, RMSE: 0.033, RR: 0.100, lr: 3.259e-05, time: 0.043s/0.317s
+[2024-07-09 12:50:01] [INFO] Iter: 2520/400000, loss: 2.251, c_loss: 0.879, f_loss: 1.372, PIR: 0.205, IR: 0.477, RRE: 6.207, RTE: 0.088, RMSE: 0.061, RR: 0.300, lr: 3.268e-05, time: 0.043s/0.317s
+[2024-07-09 12:50:05] [INFO] Iter: 2530/400000, loss: 2.377, c_loss: 0.882, f_loss: 1.495, PIR: 0.240, IR: 0.485, RRE: 2.062, RTE: 0.031, RMSE: 0.023, RR: 0.300, lr: 3.277e-05, time: 0.043s/0.317s
+[2024-07-09 12:50:08] [INFO] Iter: 2540/400000, loss: 2.390, c_loss: 0.902, f_loss: 1.488, PIR: 0.166, IR: 0.456, RRE: 3.657, RTE: 0.041, RMSE: 0.033, RR: 0.200, lr: 3.286e-05, time: 0.043s/0.317s
+[2024-07-09 12:50:12] [INFO] Iter: 2550/400000, loss: 2.136, c_loss: 0.884, f_loss: 1.253, PIR: 0.175, IR: 0.436, RRE: 2.137, RTE: 0.026, RMSE: 0.030, RR: 0.200, lr: 3.295e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:15] [INFO] Iter: 2560/400000, loss: 2.179, c_loss: 0.891, f_loss: 1.288, PIR: 0.151, IR: 0.430, RRE: 3.569, RTE: 0.034, RMSE: 0.041, RR: 0.100, lr: 3.304e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:19] [INFO] Iter: 2570/400000, loss: 1.992, c_loss: 0.886, f_loss: 1.106, PIR: 0.102, IR: 0.414, RRE: 20.208, RTE: 0.161, RMSE: 0.211, RR: 0.000, lr: 3.313e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:22] [INFO] Iter: 2580/400000, loss: 2.261, c_loss: 0.891, f_loss: 1.370, PIR: 0.132, IR: 0.465, RRE: 1.311, RTE: 0.018, RMSE: 0.017, RR: 0.400, lr: 3.322e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:25] [INFO] Iter: 2590/400000, loss: 2.333, c_loss: 0.883, f_loss: 1.449, PIR: 0.178, IR: 0.490, RRE: 2.476, RTE: 0.025, RMSE: 0.025, RR: 0.200, lr: 3.331e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:29] [INFO] Iter: 2600/400000, loss: 2.303, c_loss: 0.893, f_loss: 1.409, PIR: 0.170, IR: 0.469, RRE: 4.993, RTE: 0.045, RMSE: 0.032, RR: 0.300, lr: 3.340e-05, time: 0.042s/0.316s
+[2024-07-09 12:50:32] [INFO] Iter: 2610/400000, loss: 2.601, c_loss: 0.903, f_loss: 1.699, PIR: 0.199, IR: 0.495, RRE: 1.820, RTE: 0.022, RMSE: 0.021, RR: 0.300, lr: 3.349e-05, time: 0.042s/0.316s
+[2024-07-09 12:50:36] [INFO] Iter: 2620/400000, loss: 2.009, c_loss: 0.886, f_loss: 1.123, PIR: 0.134, IR: 0.439, RRE: 2.239, RTE: 0.019, RMSE: 0.021, RR: 0.000, lr: 3.358e-05, time: 0.042s/0.316s
+[2024-07-09 12:50:40] [INFO] Iter: 2630/400000, loss: 2.013, c_loss: 0.891, f_loss: 1.122, PIR: 0.080, IR: 0.459, RRE: 2.061, RTE: 0.026, RMSE: 0.021, RR: 0.300, lr: 3.367e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:43] [INFO] Iter: 2640/400000, loss: 2.161, c_loss: 0.898, f_loss: 1.263, PIR: 0.124, IR: 0.459, RRE: 19.688, RTE: 0.163, RMSE: 0.091, RR: 0.500, lr: 3.376e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:47] [INFO] Iter: 2650/400000, loss: 2.436, c_loss: 0.905, f_loss: 1.531, PIR: 0.184, IR: 0.459, RRE: 4.496, RTE: 0.023, RMSE: 0.032, RR: 0.000, lr: 3.385e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:50] [INFO] Iter: 2660/400000, loss: 2.255, c_loss: 0.890, f_loss: 1.364, PIR: 0.163, IR: 0.428, RRE: 1.817, RTE: 0.020, RMSE: 0.020, RR: 0.300, lr: 3.394e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:54] [INFO] Iter: 2670/400000, loss: 2.207, c_loss: 0.893, f_loss: 1.314, PIR: 0.129, IR: 0.438, RRE: 3.148, RTE: 0.026, RMSE: 0.031, RR: 0.100, lr: 3.403e-05, time: 0.042s/0.317s
+[2024-07-09 12:50:58] [INFO] Iter: 2680/400000, loss: 2.401, c_loss: 0.885, f_loss: 1.516, PIR: 0.168, IR: 0.454, RRE: 5.352, RTE: 0.053, RMSE: 0.040, RR: 0.100, lr: 3.412e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:02] [INFO] Iter: 2690/400000, loss: 2.216, c_loss: 0.893, f_loss: 1.322, PIR: 0.149, IR: 0.439, RRE: 3.954, RTE: 0.045, RMSE: 0.034, RR: 0.300, lr: 3.421e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:05] [INFO] Iter: 2700/400000, loss: 2.323, c_loss: 0.887, f_loss: 1.436, PIR: 0.195, IR: 0.457, RRE: 2.113, RTE: 0.026, RMSE: 0.025, RR: 0.300, lr: 3.430e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:09] [INFO] Iter: 2710/400000, loss: 2.271, c_loss: 0.893, f_loss: 1.378, PIR: 0.162, IR: 0.483, RRE: 3.905, RTE: 0.043, RMSE: 0.047, RR: 0.100, lr: 3.439e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:13] [INFO] Iter: 2720/400000, loss: 2.211, c_loss: 0.886, f_loss: 1.325, PIR: 0.169, IR: 0.469, RRE: 2.441, RTE: 0.023, RMSE: 0.022, RR: 0.000, lr: 3.448e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:17] [INFO] Iter: 2730/400000, loss: 2.048, c_loss: 0.892, f_loss: 1.156, PIR: 0.066, IR: 0.394, RRE: 3.414, RTE: 0.038, RMSE: 0.036, RR: 0.100, lr: 3.457e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:20] [INFO] Iter: 2740/400000, loss: 2.346, c_loss: 0.890, f_loss: 1.456, PIR: 0.124, IR: 0.443, RRE: 5.921, RTE: 0.027, RMSE: 0.038, RR: 0.300, lr: 3.466e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:24] [INFO] Iter: 2750/400000, loss: 2.169, c_loss: 0.882, f_loss: 1.287, PIR: 0.173, IR: 0.480, RRE: 1.726, RTE: 0.018, RMSE: 0.018, RR: 0.400, lr: 3.475e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:28] [INFO] Iter: 2760/400000, loss: 2.399, c_loss: 0.883, f_loss: 1.516, PIR: 0.199, IR: 0.467, RRE: 3.000, RTE: 0.038, RMSE: 0.031, RR: 0.200, lr: 3.484e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:31] [INFO] Iter: 2770/400000, loss: 2.028, c_loss: 0.876, f_loss: 1.151, PIR: 0.173, IR: 0.417, RRE: 2.383, RTE: 0.021, RMSE: 0.020, RR: 0.000, lr: 3.493e-05, time: 0.042s/0.317s
+[2024-07-09 12:51:35] [INFO] Iter: 2780/400000, loss: 2.357, c_loss: 0.895, f_loss: 1.462, PIR: 0.144, IR: 0.458, RRE: 2.962, RTE: 0.036, RMSE: 0.032, RR: 0.300, lr: 3.502e-05, time: 0.042s/0.318s
+[2024-07-09 12:51:39] [INFO] Iter: 2790/400000, loss: 2.174, c_loss: 0.887, f_loss: 1.287, PIR: 0.190, IR: 0.464, RRE: 2.807, RTE: 0.028, RMSE: 0.032, RR: 0.400, lr: 3.511e-05, time: 0.042s/0.318s
+[2024-07-09 12:51:43] [INFO] Iter: 2800/400000, loss: 2.250, c_loss: 0.887, f_loss: 1.363, PIR: 0.198, IR: 0.459, RRE: 2.369, RTE: 0.019, RMSE: 0.021, RR: 0.100, lr: 3.520e-05, time: 0.042s/0.318s
+[2024-07-09 12:51:47] [INFO] Iter: 2810/400000, loss: 2.240, c_loss: 0.900, f_loss: 1.341, PIR: 0.105, IR: 0.447, RRE: 4.511, RTE: 0.055, RMSE: 0.036, RR: 0.100, lr: 3.529e-05, time: 0.042s/0.318s
+[2024-07-09 12:51:50] [INFO] Iter: 2820/400000, loss: 2.566, c_loss: 0.900, f_loss: 1.666, PIR: 0.180, IR: 0.470, RRE: 2.382, RTE: 0.035, RMSE: 0.028, RR: 0.300, lr: 3.538e-05, time: 0.042s/0.318s
+[2024-07-09 12:51:54] [INFO] Iter: 2830/400000, loss: 2.356, c_loss: 0.890, f_loss: 1.466, PIR: 0.180, IR: 0.456, RRE: 3.048, RTE: 0.041, RMSE: 0.035, RR: 0.200, lr: 3.547e-05, time: 0.042s/0.318s
+[2024-07-09 12:51:57] [INFO] Iter: 2840/400000, loss: 2.189, c_loss: 0.881, f_loss: 1.307, PIR: 0.188, IR: 0.483, RRE: 1.353, RTE: 0.022, RMSE: 0.019, RR: 0.200, lr: 3.556e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:01] [INFO] Iter: 2850/400000, loss: 2.354, c_loss: 0.894, f_loss: 1.459, PIR: 0.155, IR: 0.452, RRE: 1.185, RTE: 0.017, RMSE: 0.016, RR: 0.300, lr: 3.565e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:05] [INFO] Iter: 2860/400000, loss: 2.162, c_loss: 0.883, f_loss: 1.279, PIR: 0.164, IR: 0.453, RRE: 2.667, RTE: 0.021, RMSE: 0.023, RR: 0.100, lr: 3.574e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:08] [INFO] Iter: 2870/400000, loss: 2.196, c_loss: 0.891, f_loss: 1.305, PIR: 0.173, IR: 0.462, RRE: 4.156, RTE: 0.034, RMSE: 0.051, RR: 0.000, lr: 3.583e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:12] [INFO] Iter: 2880/400000, loss: 2.429, c_loss: 0.891, f_loss: 1.538, PIR: 0.212, IR: 0.474, RRE: 6.681, RTE: 0.072, RMSE: 0.049, RR: 0.200, lr: 3.592e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:16] [INFO] Iter: 2890/400000, loss: 2.021, c_loss: 0.861, f_loss: 1.160, PIR: 0.172, IR: 0.422, RRE: 4.997, RTE: 0.034, RMSE: 0.045, RR: 0.100, lr: 3.601e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:20] [INFO] Iter: 2900/400000, loss: 2.344, c_loss: 0.890, f_loss: 1.454, PIR: 0.186, IR: 0.462, RRE: 2.229, RTE: 0.026, RMSE: 0.022, RR: 0.300, lr: 3.610e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:23] [INFO] Iter: 2910/400000, loss: 2.288, c_loss: 0.885, f_loss: 1.403, PIR: 0.191, IR: 0.478, RRE: 7.863, RTE: 0.065, RMSE: 0.046, RR: 0.200, lr: 3.619e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:27] [INFO] Iter: 2920/400000, loss: 2.199, c_loss: 0.900, f_loss: 1.298, PIR: 0.131, IR: 0.423, RRE: 3.862, RTE: 0.045, RMSE: 0.039, RR: 0.100, lr: 3.628e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:31] [INFO] Iter: 2930/400000, loss: 2.539, c_loss: 0.893, f_loss: 1.646, PIR: 0.205, IR: 0.479, RRE: 4.926, RTE: 0.038, RMSE: 0.032, RR: 0.000, lr: 3.637e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:34] [INFO] Iter: 2940/400000, loss: 2.367, c_loss: 0.897, f_loss: 1.470, PIR: 0.182, IR: 0.470, RRE: 1.626, RTE: 0.020, RMSE: 0.018, RR: 0.200, lr: 3.646e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:38] [INFO] Iter: 2950/400000, loss: 2.109, c_loss: 0.884, f_loss: 1.225, PIR: 0.153, IR: 0.448, RRE: 3.385, RTE: 0.027, RMSE: 0.024, RR: 0.100, lr: 3.655e-05, time: 0.042s/0.318s
+[2024-07-09 12:52:41] [INFO] Iter: 2960/400000, loss: 2.254, c_loss: 0.896, f_loss: 1.358, PIR: 0.155, IR: 0.454, RRE: 2.136, RTE: 0.018, RMSE: 0.019, RR: 0.100, lr: 3.664e-05, time: 0.041s/0.318s
+[2024-07-09 12:52:45] [INFO] Iter: 2970/400000, loss: 2.400, c_loss: 0.895, f_loss: 1.505, PIR: 0.113, IR: 0.457, RRE: 2.394, RTE: 0.022, RMSE: 0.024, RR: 0.200, lr: 3.673e-05, time: 0.041s/0.319s
+[2024-07-09 12:52:49] [INFO] Iter: 2980/400000, loss: 2.521, c_loss: 0.894, f_loss: 1.627, PIR: 0.243, IR: 0.495, RRE: 6.759, RTE: 0.056, RMSE: 0.046, RR: 0.400, lr: 3.682e-05, time: 0.041s/0.319s
+[2024-07-09 12:52:52] [INFO] Iter: 2990/400000, loss: 2.161, c_loss: 0.889, f_loss: 1.272, PIR: 0.139, IR: 0.451, RRE: 5.252, RTE: 0.048, RMSE: 0.037, RR: 0.300, lr: 3.691e-05, time: 0.041s/0.319s
+[2024-07-09 12:52:56] [INFO] Iter: 3000/400000, loss: 2.496, c_loss: 0.897, f_loss: 1.599, PIR: 0.167, IR: 0.498, RRE: 2.289, RTE: 0.028, RMSE: 0.025, RR: 0.400, lr: 3.700e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:00] [INFO] Iter: 3010/400000, loss: 2.425, c_loss: 0.889, f_loss: 1.536, PIR: 0.176, IR: 0.494, RRE: 5.289, RTE: 0.057, RMSE: 0.038, RR: 0.200, lr: 3.709e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:03] [INFO] Iter: 3020/400000, loss: 1.937, c_loss: 0.874, f_loss: 1.063, PIR: 0.152, IR: 0.421, RRE: 2.490, RTE: 0.030, RMSE: 0.027, RR: 0.100, lr: 3.718e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:07] [INFO] Iter: 3030/400000, loss: 2.536, c_loss: 0.900, f_loss: 1.636, PIR: 0.230, IR: 0.509, RRE: 1.880, RTE: 0.015, RMSE: 0.015, RR: 0.300, lr: 3.727e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:11] [INFO] Iter: 3040/400000, loss: 2.491, c_loss: 0.887, f_loss: 1.603, PIR: 0.233, IR: 0.477, RRE: 2.196, RTE: 0.025, RMSE: 0.020, RR: 0.200, lr: 3.736e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:15] [INFO] Iter: 3050/400000, loss: 2.489, c_loss: 0.900, f_loss: 1.588, PIR: 0.147, IR: 0.481, RRE: 16.669, RTE: 0.078, RMSE: 0.053, RR: 0.300, lr: 3.745e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:18] [INFO] Iter: 3060/400000, loss: 2.199, c_loss: 0.884, f_loss: 1.315, PIR: 0.188, IR: 0.446, RRE: 2.339, RTE: 0.025, RMSE: 0.020, RR: 0.200, lr: 3.754e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:22] [INFO] Iter: 3070/400000, loss: 2.329, c_loss: 0.886, f_loss: 1.443, PIR: 0.205, IR: 0.472, RRE: 2.837, RTE: 0.025, RMSE: 0.028, RR: 0.200, lr: 3.763e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:25] [INFO] Iter: 3080/400000, loss: 2.469, c_loss: 0.903, f_loss: 1.567, PIR: 0.188, IR: 0.476, RRE: 3.680, RTE: 0.035, RMSE: 0.028, RR: 0.200, lr: 3.772e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:29] [INFO] Iter: 3090/400000, loss: 2.361, c_loss: 0.881, f_loss: 1.480, PIR: 0.173, IR: 0.462, RRE: 4.880, RTE: 0.035, RMSE: 0.043, RR: 0.100, lr: 3.781e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:33] [INFO] Iter: 3100/400000, loss: 2.004, c_loss: 0.892, f_loss: 1.112, PIR: 0.128, IR: 0.434, RRE: 1.579, RTE: 0.023, RMSE: 0.023, RR: 0.400, lr: 3.790e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:37] [INFO] Iter: 3110/400000, loss: 2.202, c_loss: 0.893, f_loss: 1.309, PIR: 0.123, IR: 0.440, RRE: 1.619, RTE: 0.022, RMSE: 0.022, RR: 0.200, lr: 3.799e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:41] [INFO] Iter: 3120/400000, loss: 2.290, c_loss: 0.891, f_loss: 1.400, PIR: 0.180, IR: 0.465, RRE: 2.762, RTE: 0.025, RMSE: 0.019, RR: 0.000, lr: 3.808e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:44] [INFO] Iter: 3130/400000, loss: 2.397, c_loss: 0.895, f_loss: 1.503, PIR: 0.172, IR: 0.463, RRE: 17.388, RTE: 0.161, RMSE: 0.105, RR: 0.100, lr: 3.817e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:48] [INFO] Iter: 3140/400000, loss: 2.297, c_loss: 0.880, f_loss: 1.417, PIR: 0.230, IR: 0.493, RRE: 2.090, RTE: 0.032, RMSE: 0.022, RR: 0.100, lr: 3.826e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:52] [INFO] Iter: 3150/400000, loss: 2.567, c_loss: 0.884, f_loss: 1.683, PIR: 0.237, IR: 0.477, RRE: 6.004, RTE: 0.056, RMSE: 0.032, RR: 0.100, lr: 3.835e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:55] [INFO] Iter: 3160/400000, loss: 2.344, c_loss: 0.881, f_loss: 1.464, PIR: 0.216, IR: 0.457, RRE: 2.053, RTE: 0.022, RMSE: 0.027, RR: 0.200, lr: 3.844e-05, time: 0.041s/0.319s
+[2024-07-09 12:53:59] [INFO] Iter: 3170/400000, loss: 2.225, c_loss: 0.888, f_loss: 1.337, PIR: 0.169, IR: 0.454, RRE: 2.649, RTE: 0.021, RMSE: 0.029, RR: 0.100, lr: 3.853e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:03] [INFO] Iter: 3180/400000, loss: 2.054, c_loss: 0.871, f_loss: 1.183, PIR: 0.139, IR: 0.434, RRE: 2.664, RTE: 0.024, RMSE: 0.026, RR: 0.100, lr: 3.862e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:06] [INFO] Iter: 3190/400000, loss: 2.063, c_loss: 0.893, f_loss: 1.170, PIR: 0.113, IR: 0.409, RRE: 2.605, RTE: 0.018, RMSE: 0.027, RR: 0.100, lr: 3.871e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:10] [INFO] Iter: 3200/400000, loss: 2.554, c_loss: 0.891, f_loss: 1.663, PIR: 0.275, IR: 0.472, RRE: 20.827, RTE: 0.127, RMSE: 0.039, RR: 0.200, lr: 3.880e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:13] [INFO] Iter: 3210/400000, loss: 2.352, c_loss: 0.891, f_loss: 1.461, PIR: 0.163, IR: 0.494, RRE: 1.140, RTE: 0.023, RMSE: 0.020, RR: 0.500, lr: 3.889e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:17] [INFO] Iter: 3220/400000, loss: 2.086, c_loss: 0.898, f_loss: 1.188, PIR: 0.111, IR: 0.456, RRE: 2.022, RTE: 0.015, RMSE: 0.018, RR: 0.200, lr: 3.898e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:21] [INFO] Iter: 3230/400000, loss: 2.421, c_loss: 0.898, f_loss: 1.523, PIR: 0.170, IR: 0.473, RRE: 2.839, RTE: 0.028, RMSE: 0.026, RR: 0.100, lr: 3.907e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:24] [INFO] Iter: 3240/400000, loss: 2.203, c_loss: 0.881, f_loss: 1.321, PIR: 0.188, IR: 0.424, RRE: 21.599, RTE: 0.134, RMSE: 0.103, RR: 0.100, lr: 3.916e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:28] [INFO] Iter: 3250/400000, loss: 2.202, c_loss: 0.871, f_loss: 1.331, PIR: 0.180, IR: 0.435, RRE: 2.411, RTE: 0.026, RMSE: 0.018, RR: 0.100, lr: 3.925e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:31] [INFO] Iter: 3260/400000, loss: 2.338, c_loss: 0.896, f_loss: 1.442, PIR: 0.175, IR: 0.464, RRE: 3.522, RTE: 0.034, RMSE: 0.029, RR: 0.000, lr: 3.934e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:35] [INFO] Iter: 3270/400000, loss: 2.009, c_loss: 0.870, f_loss: 1.140, PIR: 0.167, IR: 0.421, RRE: 4.674, RTE: 0.050, RMSE: 0.049, RR: 0.300, lr: 3.943e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:39] [INFO] Iter: 3280/400000, loss: 2.377, c_loss: 0.897, f_loss: 1.480, PIR: 0.159, IR: 0.484, RRE: 2.612, RTE: 0.025, RMSE: 0.024, RR: 0.000, lr: 3.952e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:42] [INFO] Iter: 3290/400000, loss: 2.122, c_loss: 0.906, f_loss: 1.216, PIR: 0.118, IR: 0.483, RRE: 1.505, RTE: 0.014, RMSE: 0.016, RR: 0.300, lr: 3.961e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:46] [INFO] Iter: 3300/400000, loss: 2.045, c_loss: 0.884, f_loss: 1.162, PIR: 0.143, IR: 0.411, RRE: 2.830, RTE: 0.038, RMSE: 0.029, RR: 0.100, lr: 3.970e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:49] [INFO] Iter: 3310/400000, loss: 2.257, c_loss: 0.889, f_loss: 1.368, PIR: 0.181, IR: 0.493, RRE: 2.784, RTE: 0.027, RMSE: 0.025, RR: 0.200, lr: 3.979e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:53] [INFO] Iter: 3320/400000, loss: 2.063, c_loss: 0.891, f_loss: 1.172, PIR: 0.080, IR: 0.429, RRE: 2.670, RTE: 0.026, RMSE: 0.024, RR: 0.000, lr: 3.988e-05, time: 0.041s/0.320s
+[2024-07-09 12:54:57] [INFO] Iter: 3330/400000, loss: 2.017, c_loss: 0.885, f_loss: 1.132, PIR: 0.094, IR: 0.447, RRE: 2.069, RTE: 0.019, RMSE: 0.020, RR: 0.100, lr: 3.997e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:00] [INFO] Iter: 3340/400000, loss: 2.207, c_loss: 0.887, f_loss: 1.320, PIR: 0.145, IR: 0.454, RRE: 3.219, RTE: 0.034, RMSE: 0.029, RR: 0.100, lr: 4.006e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:04] [INFO] Iter: 3350/400000, loss: 2.134, c_loss: 0.877, f_loss: 1.257, PIR: 0.179, IR: 0.427, RRE: 2.210, RTE: 0.024, RMSE: 0.025, RR: 0.200, lr: 4.015e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:08] [INFO] Iter: 3360/400000, loss: 2.451, c_loss: 0.897, f_loss: 1.553, PIR: 0.185, IR: 0.484, RRE: 3.198, RTE: 0.031, RMSE: 0.027, RR: 0.200, lr: 4.024e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:12] [INFO] Iter: 3370/400000, loss: 1.968, c_loss: 0.880, f_loss: 1.087, PIR: 0.121, IR: 0.432, RRE: 4.573, RTE: 0.047, RMSE: 0.054, RR: 0.000, lr: 4.033e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:15] [INFO] Iter: 3380/400000, loss: 2.397, c_loss: 0.903, f_loss: 1.495, PIR: 0.166, IR: 0.467, RRE: 3.219, RTE: 0.037, RMSE: 0.032, RR: 0.100, lr: 4.042e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:19] [INFO] Iter: 3390/400000, loss: 1.939, c_loss: 0.881, f_loss: 1.058, PIR: 0.118, IR: 0.403, RRE: 3.083, RTE: 0.022, RMSE: 0.027, RR: 0.100, lr: 4.051e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:22] [INFO] Iter: 3400/400000, loss: 2.283, c_loss: 0.886, f_loss: 1.397, PIR: 0.177, IR: 0.462, RRE: 2.467, RTE: 0.019, RMSE: 0.023, RR: 0.100, lr: 4.060e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:26] [INFO] Iter: 3410/400000, loss: 2.016, c_loss: 0.877, f_loss: 1.138, PIR: 0.157, IR: 0.416, RRE: 3.077, RTE: 0.023, RMSE: 0.034, RR: 0.100, lr: 4.069e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:29] [INFO] Iter: 3420/400000, loss: 2.408, c_loss: 0.890, f_loss: 1.518, PIR: 0.180, IR: 0.525, RRE: 1.433, RTE: 0.016, RMSE: 0.017, RR: 0.200, lr: 4.078e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:33] [INFO] Iter: 3430/400000, loss: 2.175, c_loss: 0.879, f_loss: 1.296, PIR: 0.189, IR: 0.462, RRE: 1.900, RTE: 0.018, RMSE: 0.018, RR: 0.400, lr: 4.087e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:37] [INFO] Iter: 3440/400000, loss: 2.496, c_loss: 0.865, f_loss: 1.632, PIR: 0.271, IR: 0.483, RRE: 2.682, RTE: 0.023, RMSE: 0.019, RR: 0.200, lr: 4.096e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:40] [INFO] Iter: 3450/400000, loss: 2.568, c_loss: 0.885, f_loss: 1.683, PIR: 0.184, IR: 0.493, RRE: 2.283, RTE: 0.019, RMSE: 0.019, RR: 0.300, lr: 4.105e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:43] [INFO] Iter: 3460/400000, loss: 2.497, c_loss: 0.882, f_loss: 1.615, PIR: 0.235, IR: 0.486, RRE: 1.628, RTE: 0.020, RMSE: 0.021, RR: 0.300, lr: 4.114e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:47] [INFO] Iter: 3470/400000, loss: 2.397, c_loss: 0.878, f_loss: 1.519, PIR: 0.173, IR: 0.506, RRE: 19.181, RTE: 0.105, RMSE: 0.041, RR: 0.100, lr: 4.123e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:50] [INFO] Iter: 3480/400000, loss: 2.135, c_loss: 0.880, f_loss: 1.255, PIR: 0.176, IR: 0.425, RRE: 3.881, RTE: 0.045, RMSE: 0.036, RR: 0.400, lr: 4.132e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:54] [INFO] Iter: 3490/400000, loss: 2.297, c_loss: 0.879, f_loss: 1.418, PIR: 0.195, IR: 0.469, RRE: 2.709, RTE: 0.017, RMSE: 0.021, RR: 0.100, lr: 4.141e-05, time: 0.041s/0.320s
+[2024-07-09 12:55:58] [INFO] Iter: 3500/400000, loss: 2.282, c_loss: 0.889, f_loss: 1.393, PIR: 0.159, IR: 0.471, RRE: 3.481, RTE: 0.033, RMSE: 0.030, RR: 0.200, lr: 4.150e-05, time: 0.041s/0.320s
+[2024-07-09 12:56:02] [INFO] Iter: 3510/400000, loss: 2.268, c_loss: 0.875, f_loss: 1.393, PIR: 0.223, IR: 0.481, RRE: 4.980, RTE: 0.035, RMSE: 0.038, RR: 0.400, lr: 4.159e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:05] [INFO] Iter: 3520/400000, loss: 2.215, c_loss: 0.900, f_loss: 1.315, PIR: 0.135, IR: 0.469, RRE: 2.023, RTE: 0.021, RMSE: 0.022, RR: 0.200, lr: 4.168e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:09] [INFO] Iter: 3530/400000, loss: 2.228, c_loss: 0.896, f_loss: 1.332, PIR: 0.149, IR: 0.449, RRE: 10.602, RTE: 0.132, RMSE: 0.087, RR: 0.400, lr: 4.177e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:13] [INFO] Iter: 3540/400000, loss: 2.178, c_loss: 0.878, f_loss: 1.300, PIR: 0.188, IR: 0.457, RRE: 3.506, RTE: 0.033, RMSE: 0.032, RR: 0.000, lr: 4.186e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:16] [INFO] Iter: 3550/400000, loss: 2.186, c_loss: 0.882, f_loss: 1.304, PIR: 0.141, IR: 0.419, RRE: 2.470, RTE: 0.021, RMSE: 0.024, RR: 0.300, lr: 4.195e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:20] [INFO] Iter: 3560/400000, loss: 2.023, c_loss: 0.879, f_loss: 1.144, PIR: 0.120, IR: 0.408, RRE: 2.099, RTE: 0.028, RMSE: 0.025, RR: 0.300, lr: 4.204e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:23] [INFO] Iter: 3570/400000, loss: 2.457, c_loss: 0.891, f_loss: 1.566, PIR: 0.216, IR: 0.478, RRE: 2.080, RTE: 0.014, RMSE: 0.017, RR: 0.200, lr: 4.213e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:27] [INFO] Iter: 3580/400000, loss: 2.042, c_loss: 0.876, f_loss: 1.165, PIR: 0.194, IR: 0.439, RRE: 1.808, RTE: 0.014, RMSE: 0.013, RR: 0.100, lr: 4.222e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:31] [INFO] Iter: 3590/400000, loss: 2.087, c_loss: 0.880, f_loss: 1.207, PIR: 0.175, IR: 0.449, RRE: 1.882, RTE: 0.015, RMSE: 0.017, RR: 0.200, lr: 4.231e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:35] [INFO] Iter: 3600/400000, loss: 2.232, c_loss: 0.881, f_loss: 1.350, PIR: 0.185, IR: 0.466, RRE: 2.822, RTE: 0.026, RMSE: 0.022, RR: 0.100, lr: 4.240e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:39] [INFO] Iter: 3610/400000, loss: 2.341, c_loss: 0.888, f_loss: 1.453, PIR: 0.162, IR: 0.470, RRE: 1.364, RTE: 0.018, RMSE: 0.017, RR: 0.400, lr: 4.249e-05, time: 0.040s/0.321s
+[2024-07-09 12:56:42] [INFO] Iter: 3620/400000, loss: 2.311, c_loss: 0.897, f_loss: 1.414, PIR: 0.146, IR: 0.455, RRE: 2.592, RTE: 0.037, RMSE: 0.028, RR: 0.300, lr: 4.258e-05, time: 0.040s/0.321s
+[2024-07-09 12:56:46] [INFO] Iter: 3630/400000, loss: 2.070, c_loss: 0.883, f_loss: 1.187, PIR: 0.127, IR: 0.455, RRE: 1.600, RTE: 0.016, RMSE: 0.018, RR: 0.300, lr: 4.267e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:49] [INFO] Iter: 3640/400000, loss: 2.343, c_loss: 0.886, f_loss: 1.457, PIR: 0.207, IR: 0.483, RRE: 1.492, RTE: 0.017, RMSE: 0.018, RR: 0.300, lr: 4.276e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:53] [INFO] Iter: 3650/400000, loss: 2.403, c_loss: 0.891, f_loss: 1.513, PIR: 0.225, IR: 0.525, RRE: 1.503, RTE: 0.020, RMSE: 0.017, RR: 0.200, lr: 4.285e-05, time: 0.040s/0.320s
+[2024-07-09 12:56:57] [INFO] Iter: 3660/400000, loss: 2.066, c_loss: 0.878, f_loss: 1.187, PIR: 0.205, IR: 0.466, RRE: 1.851, RTE: 0.017, RMSE: 0.018, RR: 0.200, lr: 4.294e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:00] [INFO] Iter: 3670/400000, loss: 2.180, c_loss: 0.885, f_loss: 1.296, PIR: 0.182, IR: 0.449, RRE: 2.351, RTE: 0.032, RMSE: 0.028, RR: 0.200, lr: 4.303e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:04] [INFO] Iter: 3680/400000, loss: 2.184, c_loss: 0.896, f_loss: 1.288, PIR: 0.148, IR: 0.432, RRE: 4.998, RTE: 0.058, RMSE: 0.048, RR: 0.000, lr: 4.312e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:07] [INFO] Iter: 3690/400000, loss: 2.396, c_loss: 0.879, f_loss: 1.517, PIR: 0.210, IR: 0.458, RRE: 5.862, RTE: 0.038, RMSE: 0.038, RR: 0.100, lr: 4.321e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:11] [INFO] Iter: 3700/400000, loss: 2.038, c_loss: 0.878, f_loss: 1.159, PIR: 0.126, IR: 0.423, RRE: 3.891, RTE: 0.057, RMSE: 0.037, RR: 0.200, lr: 4.330e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:15] [INFO] Iter: 3710/400000, loss: 2.311, c_loss: 0.899, f_loss: 1.412, PIR: 0.152, IR: 0.468, RRE: 1.179, RTE: 0.016, RMSE: 0.015, RR: 0.400, lr: 4.339e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:18] [INFO] Iter: 3720/400000, loss: 2.397, c_loss: 0.894, f_loss: 1.503, PIR: 0.195, IR: 0.490, RRE: 3.789, RTE: 0.040, RMSE: 0.041, RR: 0.300, lr: 4.348e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:22] [INFO] Iter: 3730/400000, loss: 2.155, c_loss: 0.886, f_loss: 1.269, PIR: 0.175, IR: 0.425, RRE: 1.624, RTE: 0.018, RMSE: 0.014, RR: 0.200, lr: 4.357e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:25] [INFO] Iter: 3740/400000, loss: 2.137, c_loss: 0.874, f_loss: 1.263, PIR: 0.158, IR: 0.438, RRE: 3.330, RTE: 0.037, RMSE: 0.038, RR: 0.200, lr: 4.366e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:29] [INFO] Iter: 3750/400000, loss: 2.280, c_loss: 0.893, f_loss: 1.388, PIR: 0.155, IR: 0.455, RRE: 10.995, RTE: 0.041, RMSE: 0.087, RR: 0.200, lr: 4.375e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:32] [INFO] Iter: 3760/400000, loss: 2.632, c_loss: 0.882, f_loss: 1.749, PIR: 0.329, IR: 0.517, RRE: 2.405, RTE: 0.017, RMSE: 0.016, RR: 0.300, lr: 4.384e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:36] [INFO] Iter: 3770/400000, loss: 2.483, c_loss: 0.886, f_loss: 1.597, PIR: 0.246, IR: 0.511, RRE: 3.812, RTE: 0.053, RMSE: 0.045, RR: 0.500, lr: 4.393e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:39] [INFO] Iter: 3780/400000, loss: 2.199, c_loss: 0.875, f_loss: 1.324, PIR: 0.172, IR: 0.445, RRE: 3.405, RTE: 0.031, RMSE: 0.036, RR: 0.100, lr: 4.402e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:43] [INFO] Iter: 3790/400000, loss: 2.082, c_loss: 0.878, f_loss: 1.204, PIR: 0.160, IR: 0.436, RRE: 2.985, RTE: 0.030, RMSE: 0.028, RR: 0.400, lr: 4.411e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:46] [INFO] Iter: 3800/400000, loss: 2.317, c_loss: 0.880, f_loss: 1.437, PIR: 0.146, IR: 0.452, RRE: 3.262, RTE: 0.025, RMSE: 0.025, RR: 0.100, lr: 4.420e-05, time: 0.040s/0.320s
+[2024-07-09 12:57:50] [INFO] Iter: 3810/400000, loss: 2.138, c_loss: 0.880, f_loss: 1.257, PIR: 0.200, IR: 0.466, RRE: 1.618, RTE: 0.025, RMSE: 0.016, RR: 0.300, lr: 4.429e-05, time: 0.040s/0.320s
+[2024-07-09 12:57:53] [INFO] Iter: 3820/400000, loss: 2.331, c_loss: 0.882, f_loss: 1.449, PIR: 0.162, IR: 0.442, RRE: 4.265, RTE: 0.041, RMSE: 0.032, RR: 0.100, lr: 4.438e-05, time: 0.040s/0.321s
+[2024-07-09 12:57:57] [INFO] Iter: 3830/400000, loss: 2.182, c_loss: 0.874, f_loss: 1.308, PIR: 0.204, IR: 0.460, RRE: 4.769, RTE: 0.038, RMSE: 0.026, RR: 0.100, lr: 4.447e-05, time: 0.040s/0.320s
+[2024-07-09 12:58:00] [INFO] Iter: 3840/400000, loss: 2.276, c_loss: 0.882, f_loss: 1.394, PIR: 0.202, IR: 0.447, RRE: 3.653, RTE: 0.028, RMSE: 0.037, RR: 0.300, lr: 4.456e-05, time: 0.040s/0.320s
+[2024-07-09 12:58:04] [INFO] Iter: 3850/400000, loss: 2.405, c_loss: 0.899, f_loss: 1.506, PIR: 0.174, IR: 0.464, RRE: 2.713, RTE: 0.028, RMSE: 0.030, RR: 0.300, lr: 4.465e-05, time: 0.040s/0.320s
+[2024-07-09 12:58:07] [INFO] Iter: 3860/400000, loss: 2.192, c_loss: 0.880, f_loss: 1.311, PIR: 0.191, IR: 0.442, RRE: 2.655, RTE: 0.030, RMSE: 0.025, RR: 0.300, lr: 4.474e-05, time: 0.040s/0.320s
+[2024-07-09 12:58:11] [INFO] Iter: 3870/400000, loss: 2.149, c_loss: 0.890, f_loss: 1.259, PIR: 0.123, IR: 0.478, RRE: 15.170, RTE: 0.168, RMSE: 0.095, RR: 0.200, lr: 4.483e-05, time: 0.040s/0.320s
+[2024-07-09 12:58:15] [INFO] Iter: 3880/400000, loss: 2.024, c_loss: 0.872, f_loss: 1.153, PIR: 0.158, IR: 0.443, RRE: 1.666, RTE: 0.013, RMSE: 0.015, RR: 0.200, lr: 4.492e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:18] [INFO] Iter: 3890/400000, loss: 2.426, c_loss: 0.877, f_loss: 1.549, PIR: 0.270, IR: 0.493, RRE: 1.753, RTE: 0.019, RMSE: 0.016, RR: 0.400, lr: 4.501e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:22] [INFO] Iter: 3900/400000, loss: 2.507, c_loss: 0.886, f_loss: 1.620, PIR: 0.202, IR: 0.468, RRE: 3.176, RTE: 0.024, RMSE: 0.025, RR: 0.000, lr: 4.510e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:25] [INFO] Iter: 3910/400000, loss: 2.539, c_loss: 0.888, f_loss: 1.651, PIR: 0.259, IR: 0.514, RRE: 1.658, RTE: 0.023, RMSE: 0.023, RR: 0.200, lr: 4.519e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:29] [INFO] Iter: 3920/400000, loss: 2.208, c_loss: 0.878, f_loss: 1.331, PIR: 0.230, IR: 0.405, RRE: 8.712, RTE: 0.057, RMSE: 0.041, RR: 0.200, lr: 4.528e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:33] [INFO] Iter: 3930/400000, loss: 2.418, c_loss: 0.881, f_loss: 1.537, PIR: 0.198, IR: 0.491, RRE: 17.525, RTE: 0.050, RMSE: 0.076, RR: 0.300, lr: 4.537e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:37] [INFO] Iter: 3940/400000, loss: 1.960, c_loss: 0.868, f_loss: 1.092, PIR: 0.194, IR: 0.439, RRE: 1.955, RTE: 0.022, RMSE: 0.020, RR: 0.400, lr: 4.546e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:40] [INFO] Iter: 3950/400000, loss: 1.928, c_loss: 0.886, f_loss: 1.042, PIR: 0.123, IR: 0.407, RRE: 2.833, RTE: 0.028, RMSE: 0.027, RR: 0.200, lr: 4.555e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:45] [INFO] Iter: 3960/400000, loss: 2.274, c_loss: 0.873, f_loss: 1.401, PIR: 0.206, IR: 0.456, RRE: 3.486, RTE: 0.034, RMSE: 0.030, RR: 0.300, lr: 4.564e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:49] [INFO] Iter: 3970/400000, loss: 2.236, c_loss: 0.884, f_loss: 1.352, PIR: 0.200, IR: 0.448, RRE: 12.890, RTE: 0.096, RMSE: 0.075, RR: 0.200, lr: 4.573e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:52] [INFO] Iter: 3980/400000, loss: 2.391, c_loss: 0.890, f_loss: 1.501, PIR: 0.203, IR: 0.487, RRE: 4.489, RTE: 0.043, RMSE: 0.037, RR: 0.000, lr: 4.582e-05, time: 0.040s/0.321s
+[2024-07-09 12:58:56] [INFO] Iter: 3990/400000, loss: 2.276, c_loss: 0.881, f_loss: 1.395, PIR: 0.175, IR: 0.492, RRE: 2.294, RTE: 0.030, RMSE: 0.027, RR: 0.100, lr: 4.591e-05, time: 0.040s/0.321s
